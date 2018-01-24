@@ -1,0 +1,84 @@
+{
+    "theme" : "dark",
+    "color": "#9e3535",
+    "placement": "fixed-top",
+    "brand": {
+        "text": "Automata",
+        "src": "http://www.energysys.com/wp-content/uploads/2012/03/Energysys_avatar-logo-transparent-bg.png"
+    },
+    "navLeft": {
+      "list":  [
+        {
+            "type": "link",
+            "value": "Home",
+            "link": "/",
+            "fa": "home",
+            "active": true
+        },
+        {
+            "type": "link",
+            "value": "About",
+            "link": "/"   
+        },
+        {
+            "type": "dropdown",
+            "value": "Programming ",
+            "list": [
+                {
+                    "type": "dropdown-item",
+                    "value": "C++",
+                    "link": "/"   
+                },
+                {
+                    "type": "dropdown-item",
+                    "value": "Javascript",
+                    "link": "/"   
+                },
+                {
+                    "type": "dropdown-item",
+                    "value": "Java",
+                    "link": "/"   
+                },
+                {
+                    "type": "dropdown-divider"
+                },
+                {
+                    "type": "dropdown-collapse",
+                    "value": "Web",
+                    "list": [
+                        {
+                            "type": "dropdown-item",
+                            "value": "Javascript",
+                            "link": "/"   
+                        },
+                        {
+                            "type": "dropdown-collapse",
+                            "value": "Web",
+                            "list": [
+                                {
+                                    "type": "dropdown-item",
+                                    "value": "Javascript",
+                                    "link": "/"   
+                                }
+                            ]
+        
+                        }
+                    ]
+
+                }
+            ]
+        }
+    ]
+},
+    "navRight": {
+        "list": [
+        {
+            "type": "link",
+            "value": "LogIn",
+            "link": "/",
+            "fa": "sign-in"
+        }
+    ]
+}
+
+}

@@ -1,6 +1,20 @@
 import React from 'react';
 
-import {Nav,NavBrand,NavToggle, NavContent} from '../utils/nav-utils'
+import {
+    Nav,
+    NavBrand,
+    NavToggle,
+    NavContent,
+    NavLeft,
+    NavRight,
+    NavLinkItem,
+    NavDropDown,
+    DropDownCollapse,
+    DropDownDivider,
+    DropDownItem 
+} from '../utils/nav-utils'
+
+
 export default class NavBar extends React.Component {
     constructor(props) {
         super(props);
@@ -11,11 +25,19 @@ export default class NavBar extends React.Component {
         this.setState ( {collapse: !this.state.collapse});
     }
     render() {
+        const store = this.props.store;
         return(
-            <Nav theme='dark' color="#a8424b" placement="fixed-top">
-                <NavBrand text="Finite Automata" src="http://www.energysys.com/wp-content/uploads/2012/03/Energysys_avatar-logo-transparent-bg.png"/>
+            <Nav theme={store.theme} color={store.color} placement={store.placement}>
+                <NavBrand text={store.brand.text} src={store.brand.src}/>
                 <NavToggle toggle={this.toggle} fa={true}/>
-                <NavContent collapse={this.state.collapse}/>
+                <NavContent collapse={this.state.collapse}>
+                    <NavLeft list={store.navLeft.list}>
+                        {store.navLeft.children}
+                    </NavLeft>
+                    <NavRight list={store.navRight.list}>
+                        {store.navRight.children}
+                    </NavRight>
+                </NavContent>
             </Nav>
         );
     }
