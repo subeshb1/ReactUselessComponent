@@ -1,6 +1,6 @@
 import PropTypes, { string } from 'prop-types';
 import React from 'react';
-
+import {NavLink,Link} from 'react-router-dom';
 
 //Nav
 export const Nav = (props) => {
@@ -9,11 +9,13 @@ export const Nav = (props) => {
        
        return string.toLowerCase() === 'light' ? 'navbar-light': 'navbar-dark'
     }
+
+    
     let theme = themeFinder(props.theme);
     let space = props.placement === 'fixed-top' ? <div style ={{height: 55,width:'100%'}}></div>: '';
     return (
         <div>
-        <nav className={`navbar ${props.placement} navbar-expand-lg ${theme}`} style= { {background:props.color}}>
+        <nav className={`navbar ${props.placement} navbar-expand-lg ${theme}`} style= { {background:props.color,transition:'all 0.5s'}}>
             {props.children}
         </nav>
         {space}
@@ -113,7 +115,7 @@ NavContent.propTypes = {
 export const NavLeft = (props) => {
     let child = [];
     if(props.list) {
-        child = mapItems(props.list);
+        child = mapItems(props.list,props.active);
     }
     return (
         <ul className="navbar-nav mr-auto">
@@ -130,7 +132,7 @@ NavLeft.propTypes = {
 export const NavRight = (props) => {
     let child = [];
     if(props.list) {
-        child = mapItems(props.list);
+        child = mapItems(props.list,props.active);
     }
     return (
         <ul className="navbar-nav">
@@ -146,11 +148,11 @@ NavRight.propTypes = {
 
 export const NavLinkItem = (props) => {
     let ac = '';
-    if(props.active)
+    if(props.active == props.value)
         ac = 'active';
     return(
         <li className={`nav-item ${ac}`}>
-            <a className="nav-link" href={props.link}> <i className={`fa fa-${props.fa}`} aria-hidden="true"></i>  {props.value} </a>
+            <a className="nav-link " href={props.link}> <i className={`fa fa-${props.fa}`} aria-hidden="true"></i>  {props.value} </a>
         </li>
     );
 }
@@ -275,10 +277,10 @@ function mapDropItem(list) {
 
 
 
-function mapItems(list) {
+function mapItems(list,active) {
     const arr = list.map( (item,index) => {
         if(item.type == 'link') {
-            return <NavLinkItem key={index} value={item.value} link={item.link} fa={item.fa} active={item.active}/>
+            return <NavLinkItem key={index} value={item.value} link={item.link} fa={item.fa} active={active}/>
         }
         else if(item.type == 'dropdown') {
             return <NavDropDown key={index} value={item.value} list={item.list} />

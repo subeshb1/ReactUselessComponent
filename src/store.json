@@ -11,9 +11,8 @@
         {
             "type": "link",
             "value": "Home",
-            "link": "/",
-            "fa": "home",
-            "active": true
+            "link": "/fgh",
+            "fa": "home"
         },
         {
             "type": "link",
@@ -38,34 +37,10 @@
                     "type": "dropdown-item",
                     "value": "Java",
                     "link": "/"   
-                },
-                {
-                    "type": "dropdown-divider"
-                },
-                {
-                    "type": "dropdown-collapse",
-                    "value": "Web",
-                    "list": [
-                        {
-                            "type": "dropdown-item",
-                            "value": "Javascript",
-                            "link": "/"   
-                        },
-                        {
-                            "type": "dropdown-collapse",
-                            "value": "Web",
-                            "list": [
-                                {
-                                    "type": "dropdown-item",
-                                    "value": "Javascript",
-                                    "link": "/"   
-                                }
-                            ]
-        
-                        }
-                    ]
+                }       
+                    
 
-                }
+                
             ]
         }
     ]
