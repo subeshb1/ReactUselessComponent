@@ -4,9 +4,8 @@
   "description": "A list  of basic components made with bootstrap 4",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build",
-    "build": "webpack -d && webpack-dev-server --content-base src/ --inline --hot --port 4000 --history-api-fallback --host 0.0.0.0"
+    "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
+    "start": "node ./src/app.js"
   },
   "author": "Subesh Bhandari",
   "license": "MIT",
