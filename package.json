@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
-    "start": "node ./src/app.js"
+    "start": "node index.js"
   },
   "author": "Subesh Bhandari",
   "license": "MIT",
