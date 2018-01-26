@@ -1,6 +1,6 @@
 {
     "theme" : "dark",
-    "color": "#9e3535",
+    "color": "#563d7c",
     "placement": "fixed-top",
     "brand": {
         "text": "Automata",
@@ -11,38 +11,23 @@
         {
             "type": "link",
             "value": "Home",
-            "link": "/fgh",
-            "fa": "home"
+            "link": "/",
+            "fa": "home",
+            "exact": true
         },
         {
             "type": "link",
             "value": "About",
-            "link": "/"   
+            "link": "/about"  ,
+            "exact": false 
         },
         {
-            "type": "dropdown",
-            "value": "Programming ",
-            "list": [
-                {
-                    "type": "dropdown-item",
-                    "value": "C++",
-                    "link": "/"   
-                },
-                {
-                    "type": "dropdown-item",
-                    "value": "Javascript",
-                    "link": "/"   
-                },
-                {
-                    "type": "dropdown-item",
-                    "value": "Java",
-                    "link": "/"   
-                }       
-                    
-
-                
-            ]
+            "type": "link",
+            "value": "Top Repos",
+            "link": "/top-repos"  ,
+            "exact": false 
         }
+        
     ]
 },
     "navRight": {
@@ -50,8 +35,9 @@
         {
             "type": "link",
             "value": "LogIn",
-            "link": "/",
-            "fa": "sign-in"
+            "link": "/login",
+            "fa": "sign-in",
+            "exact": false
         }
     ]
 }

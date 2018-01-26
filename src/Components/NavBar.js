@@ -31,10 +31,10 @@ export default class NavBar extends React.Component {
                 <NavBrand text={store.brand.text} src={store.brand.src}/>
                 <NavToggle toggle={this.toggle} fa={true}/>
                 <NavContent collapse={this.state.collapse}>
-                    <NavLeft list={store.navLeft.list} active={this.props.active}>
+                    <NavLeft list={store.navLeft.list} >
                         {store.navLeft.children}
                     </NavLeft>
-                    <NavRight list={store.navRight.list} active={this.props.active}>
+                    <NavRight list={store.navRight.list}>
                         {store.navRight.children}
                     </NavRight>
                 </NavContent>

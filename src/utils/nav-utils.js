@@ -12,7 +12,7 @@ export const Nav = (props) => {
 
     
     let theme = themeFinder(props.theme);
-    let space = props.placement === 'fixed-top' ? <div style ={{height: 55,width:'100%'}}></div>: '';
+    let space = props.placement === 'fixed-top' ? <div style ={{height: 58,width:'100%'}}></div>: '';
     return (
         <div>
         <nav className={`navbar ${props.placement} navbar-expand-lg ${theme}`} style= { {background:props.color,transition:'all 0.5s'}}>
@@ -44,10 +44,10 @@ export const NavBrand = (props) => {
 
     return (
 
-        <a className="navbar-brand" href={props.link}>
+        <Link  className="navbar-brand" to={props.link}>
              {img}
              {props.text}
-        </a>
+        </Link>
     );
 };
 
@@ -115,7 +115,7 @@ NavContent.propTypes = {
 export const NavLeft = (props) => {
     let child = [];
     if(props.list) {
-        child = mapItems(props.list,props.active);
+        child = mapItems(props.list);
     }
     return (
         <ul className="navbar-nav mr-auto">
@@ -132,10 +132,11 @@ NavLeft.propTypes = {
 export const NavRight = (props) => {
     let child = [];
     if(props.list) {
-        child = mapItems(props.list,props.active);
+        child = mapItems(props.list);
     }
     return (
         <ul className="navbar-nav">
+            
             {props.children}            
             {child}
         </ul>
@@ -152,7 +153,9 @@ export const NavLinkItem = (props) => {
         ac = 'active';
     return(
         <li className={`nav-item ${ac}`}>
-            <a className="nav-link " href={props.link}> <i className={`fa fa-${props.fa}`} aria-hidden="true"></i>  {props.value} </a>
+            <NavLink exact={props.exact} activeClassName="active" to={props.link} className="nav-link">
+                <i className={`fa fa-${props.fa}`} ></i>  {props.value} 
+            </NavLink>
         </li>
     );
 }
@@ -248,7 +251,9 @@ export class DropDownCollapse extends React.Component {
 
 export const DropDownItem = (props) => {
     return (
-        <a className="dropdown-item" href={props.link} >{props.value}</a>
+        <Link  className="dropdown-item" to={props.link}>
+            {props.value}
+        </Link>
     );
 }
 DropDownItem.defaultProps = {
@@ -280,7 +285,7 @@ function mapDropItem(list) {
 function mapItems(list,active) {
     const arr = list.map( (item,index) => {
         if(item.type == 'link') {
-            return <NavLinkItem key={index} value={item.value} link={item.link} fa={item.fa} active={active}/>
+            return <NavLinkItem key={index} value={item.value} link={item.link} fa={item.fa} active={active} exact={item.exact}/>
         }
         else if(item.type == 'dropdown') {
             return <NavDropDown key={index} value={item.value} list={item.list} />
