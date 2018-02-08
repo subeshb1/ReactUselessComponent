@@ -4,8 +4,9 @@ export default class TopRepos extends React.Component {
 
     constructor(props) {
         super(props);
+        this._unmount = false;
         this.state = {
-            selectedLanguage: 'JavaScript',
+            selectedLanguage: 'java',
             repos: null
         }
         this.updateLanguage = this.updateLanguage.bind(this);
@@ -15,10 +16,13 @@ export default class TopRepos extends React.Component {
         api.fetchPopularRepos(this.state.selectedLanguage)
         .then((repos) => {
             console.log(repos);
-            
+            if(!this._unmount)
            this.setState({repos: repos});
             
         })
+    }
+    componentWillUnmount() {
+        this._unmount = true;
     }
     updateLanguage(lang) {
         this.setState ( {selectedLanguage: lang  } );
@@ -40,7 +44,7 @@ export default class TopRepos extends React.Component {
             <img className="card-img-top" src={owner.avatar_url} />
             <div className="card-body">
                 <h4 className="card-title">{name}</h4>
-                <p className="card-text">{description.substring(0,30) + ' ...'}</p>
+                <p className="card-text">{ description?description.substring(0,30):'' + ' ...'}</p>
                 <a href={html_url} className="btn btn-primary">Link</a>
             </div>
             </div>

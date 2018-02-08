@@ -12,7 +12,7 @@ export const Nav = (props) => {
 
     
     let theme = themeFinder(props.theme);
-    let space = props.placement === 'fixed-top' ? <div style ={{height: 58,width:'100%'}}></div>: '';
+    let space = props.placement === 'fixed-top' ? <div style ={{height: 55,width:'100%'}}></div>: '';
     return (
         <div>
         <nav className={`navbar ${props.placement} navbar-expand-lg ${theme}`} style= { {background:props.color,transition:'all 0.5s'}}>

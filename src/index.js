@@ -6,6 +6,7 @@ import {BrowserRouter,Route,Switch} from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
 import TopRepos from './pages/TopRepos';
+import  SVG from './pages/DFA';
 class App extends React.Component {
     constructor(props) {
 
@@ -24,6 +25,7 @@ class App extends React.Component {
                 <Route exact path='/' component={Home}/>
                 <Route path='/about' component={About}/>
                 <Route path='/top-repos' component={TopRepos}/>
+                <Route path='/dfa' component={SVG} />
                 <Route component={NoMatch} />
                 </Switch>
 

@@ -15,7 +15,7 @@ module.exports = {
                 include: path.resolve(__dirname,'src'),
                 loader: 'babel-loader',
                 query: {
-                    presets: ['react','es2016']
+                    presets: ['react','es2017']
                 }
             }
         ]

@@ -1,0 +1,36 @@
+
+
+{
+    "name": "useless-component",
+    "version": "0.0.1",
+    "description": "A list  of basic components made with bootstrap 4",
+    "main": "app.js",
+    "scripts": {
+        "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
+        "start": "node index.js"
+    },
+    "author": "Subesh Bhandari",
+    "license": "MIT",
+    "dependencies": {
+      "axios": "^0.17.1",
+      "bootstrap": "^4.0.0",
+      "express": "^4.16.2",
+      "jquery": "^3.3.1",
+      "popper": "^1.0.1",
+      "prop-types": "^15.6.0",
+      "react": "^16.2.0",
+      "react-dom": "^16.2.0",
+      "react-router-dom": "^4.2.2"
+    },
+    "devDependencies": {
+      "babel-core": "^6.26.0",
+      "babel-loader": "^7.1.2",
+      "babel-preset-es2016": "^6.24.1",
+      "babel-preset-react": "^6.24.1",
+      "css-loader": "^0.28.9",
+      "style-loader": "^0.19.1",
+      "webpack": "^3.10.0",
+      "webpack-dev-server": "^2.11.1"
+    }
+  }
+  
