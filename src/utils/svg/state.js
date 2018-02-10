@@ -6,39 +6,39 @@ class State extends Component {
     constructor(props) {
         super(props);
         this.state =  {select:false,drag:false} ;
-        this.select = this.select.bind(this);
+        this.enableSelect = this.enableSelect.bind(this);
         this.enableDrag = this.enableDrag.bind(this);
-        this.disableDrag = this.disableDrag.bind(this);
     }
 
     //select the Item
-    select(evt) {
-        this.setState({select: true});
+    enableSelect(evt) {
+        
+        this.props.onClick(this.props.index);
         evt.preventDefault();
         evt.stopPropagation();
+
     }
 
+    //Enable Drag
     enableDrag(evt) {
-        this.setState({drag: true});
-        console.log("enabled");
+        console.log(this.props.index);
+        this.props.onMouseDown(this.props.index);
+        evt.preventDefault();
+        evt.stopPropagation();
         
     }
 
-    disableDrag(evt) {
-        console.log("Disabled");
-        this.setState({drag: false});
-        
-    }
-
+    
     render() {
         return (
             <g 
             onClick={this.select}  
             onMouseDown={this.enableDrag}
-            onMouseUp={this.disableDrag}
+            
+            
             style={{cursor:'move'}} >
 
-                <circle cx={this.props.cx} cy={this.props.cy} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.state.select?"5,5":""}/>
+                <circle cx={this.props.cx} cy={this.props.cy} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/>
                 <text x={this.props.cx} y={this.props.cy} textAnchor="middle"> {this.props.text} </text>
             </g>
         );
