@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Draw from '../utils/svg/draw';
-
+let tuples = {
+    state:['q0','q1'],
+    alphabet:['a','b'],
+    
+}
 class Drawer extends Component {
     render() {
         return (
@@ -12,7 +16,7 @@ class Drawer extends Component {
             <nav>asdasds</nav>
             <div className='row'> 
                 <div className="col-12 col-md-1"> ds</div>
-                <Draw />
+                <Draw tuples={tuples}/>
                 <div className="col-12 col-md-2"> ds</div>
                 </div>
             </div>

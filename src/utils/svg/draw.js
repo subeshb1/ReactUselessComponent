@@ -10,11 +10,13 @@ class Draw extends Component {
             content: [
                 {
                     type: "State",
-                    name: "q1",
+                    name: "q0",
                     isDragged:false,
                     isSelected:false,
                     x:100,
                     y:100,
+                    isStart:true,
+                    isFinal:true
                 },
                 {
                     type: "State",
@@ -26,7 +28,7 @@ class Draw extends Component {
                 },
                 {
                     type: "State",
-                    name: "q1",
+                    name: "q2",
                     isDragged:false,
                     isSelected:false,
                     x: 500,
@@ -34,31 +36,75 @@ class Draw extends Component {
                 },
                 {
                     type: "State",
-                    name: "q1",
+                    name: "q3",
                     isDragged:false,
                     isSelected:false,
-                    x: 1000,
+                    x: 700,
                     y:100,
-                }
+                    isFinal:true
+                },
             ],
+            
             selectedItem:undefined,
             dragItem:undefined
         }
+        this.state.content.unshift(
+            {
+                start:this.state.content[0],
+                end:this.state.content[1],
+                isDragged:false,
+                    isSelected:false,
+                
+            },
+            {
+                start:this.state.content[1],
+                end:this.state.content[0],
+                isDragged:false,
+                    isSelected:false,
+                
+            },
+            {
+                start:this.state.content[1],
+                end:this.state.content[2],
+                isDragged:false,
+                    isSelected:false,
+                
+            },
+            {
+                start:this.state.content[0],
+                end:this.state.content[3],
+                isDragged:false,
+                    isSelected:false,
+                
+            },
+            
+            {
+                start:this.state.content[3],
+                end:this.state.content[1],
+                isDragged:false,
+                    isSelected:false,
+            },
+            {
+                start:this.state.content[1],
+                end:this.state.content[1],
+                isDragged:false,
+                    isSelected:false,
+            },
+        
+        );
         
         //handles drag setting
         this.setDragItem = this.setDragItem.bind(this);
         this.removeDrag = this.removeDrag.bind(this);
         this.moveChild=this.moveChild.bind(this);
         this.removeSelection = this.removeSelection.bind(this);
-        // this.mouseUp=this.mouseUp.bind(this);
-        // this.click = this.click.bind(this);
-
+    
     }
     
     //to move a Child (mouseMove)
     moveChild(e) {
         if(this.state.dragItem) {
-            console.log(e.nativeEvent.offsetX);
+           
             this.state.dragItem.x = e.nativeEvent.offsetX;
             this.state.dragItem.y = e.nativeEvent.offsetY;
             this.setState({dragItem:this.state.dragItem});
@@ -96,7 +142,7 @@ class Draw extends Component {
    }
 
     componentDidUpdate() {
-        console.log(this.state);
+        // console.log(this.state);
     }
 
     render() {
@@ -110,19 +156,32 @@ class Draw extends Component {
                     isDragged={val.isDragged}
                     isSelected={val.isSelected}
                     onMouseDown={this.setDragItem}
-                
+                    isStart={val.isStart}
+                    isFinal={val.isFinal}
                 />
                 )
+            } else {
+                return    ( 
+                <StateArc key={index} 
+                index={index}
+                isSelected={val.isSelected}
+                    start={ {x:val.start.x ,y: val.start.y } }
+                    end={ {x: val.end.x,y:val.end.y} } 
+                    invert={val.invert} 
+                    onMouseDown={this.setDragItem}/>
+                )
             }
+            
+            
         } );
-        let c1 = {
-            x: (1000-100)/2 + 100,
-            y: (1000-100)/3 + 100
-        }
-
-        let p1 = new Point( {x:10,y:10} );
-        let p2 = new Point({x:11,y:0});
-        console.log(p1.rotate(-Math.PI));
+        // let arc = this.state.arc.map((val,index) => {
+        //     return     <StateArc key={index} 
+        //     start={ {x:val.start.x ,y: val.start.y } }
+        //      end={ {x: val.end.x,y:val.end.y} } 
+        //      invert={val.invert} 
+        //      onMouseDown={this.setDragItem}/>
+        // })
+        
         return (
             
             <div 
@@ -141,10 +200,8 @@ class Draw extends Component {
                     onMouseDown= {this.removeSelection}
                     onTouchMove={this.moveChild}
                 >
-                    <StateArc start={ {x: 200,y: 100} }  end={ {x: 100,y:500} } isSelected={true}/>
-                    <StateArc start={ {x: 100,y: 100} }  end={ {x: 500,y:100} } />
-                    <StateArc start={ {x: 100,y: 100} }  end={ {x: 1000,y:100} } />
                     
+                   
                     {content}
                 </svg>
                 

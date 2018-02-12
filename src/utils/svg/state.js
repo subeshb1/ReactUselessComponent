@@ -6,18 +6,9 @@ class State extends Component {
     constructor(props) {
         super(props);
         this.state =  {select:false,drag:false} ;
-        this.enableSelect = this.enableSelect.bind(this);
         this.enableDrag = this.enableDrag.bind(this);
     }
 
-    //select the Item
-    enableSelect(evt) {
-        
-        this.props.onClick(this.props.index);
-        evt.preventDefault();
-        evt.stopPropagation();
-
-    }
 
     //Enable Drag
     enableDrag(evt) {
@@ -30,20 +21,28 @@ class State extends Component {
 
     
     render() {
+        let x = this.props.cx;
+        let y = this.props.cy;
         return (
             <g 
-            onClick={this.select}  
-            onMouseDown={this.enableDrag}
-            
-            
+            onMouseDown={this.enableDrag}            
             style={{cursor:'move'}} >
 
-                <circle cx={this.props.cx} cy={this.props.cy} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/>
-                <text x={this.props.cx} y={this.props.cy} textAnchor="middle"> {this.props.text} </text>
+                {this.props.isFinal? <circle cx={x} cy={y} r="45" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/> : "" }
+                {this.props.isStart? <path d={`M ${x-70} ${y-3} ${x-50} ${y-3} ${x-50} ${y-10}  ${x-40} ${y}  ${x-50} ${y+10}  ${x-50} ${y+3} ${x-70} ${y+3} Z`  }
+                    stroke="black" strokeWidth='2' fill="grey"
+                />: ""}
+                <circle cx={x} cy={y} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/>
+                <text x={x} y={y} textAnchor="middle"> {this.props.text} </text>
+            
             </g>
         );
     }
 }
 
+State.defaultProps = {
+    isStart:false,
+    isFinal:false
+}
 
 export default State;
