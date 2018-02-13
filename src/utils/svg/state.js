@@ -12,7 +12,6 @@ class State extends Component {
 
     //Enable Drag
     enableDrag(evt) {
-        console.log(this.props.index);
         this.props.onMouseDown(this.props.index);
         evt.preventDefault();
         evt.stopPropagation();

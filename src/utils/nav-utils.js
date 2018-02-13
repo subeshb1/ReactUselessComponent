@@ -15,7 +15,7 @@ export const Nav = (props) => {
     let space = props.placement === 'fixed-top' ? <div style ={{height: 55,width:'100%'}}></div>: '';
     return (
         <div>
-        <nav className={`navbar ${props.placement} navbar-expand-lg ${theme}`} style= { {background:props.color,transition:'all 0.5s'}}>
+        <nav className={`navbar ${props.placement} navbar-expand-lg ${theme} `} style= { {background:props.color,transition:'all 0.5s'}}>
             {props.children}
         </nav>
         {space}

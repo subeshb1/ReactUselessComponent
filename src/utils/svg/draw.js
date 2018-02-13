@@ -6,92 +6,18 @@ import Point from './points';
 class Draw extends Component {
     constructor(props) {
         super(props);
+        
+        
         this.state = {
             content: [
-                {
-                    type: "State",
-                    name: "q0",
-                    isDragged:false,
-                    isSelected:false,
-                    x:100,
-                    y:100,
-                    isStart:true,
-                    isFinal:true
-                },
-                {
-                    type: "State",
-                    name: "q1",
-                    isDragged:false,
-                    isSelected:false,
-                    x: 300,
-                    y:100,
-                },
-                {
-                    type: "State",
-                    name: "q2",
-                    isDragged:false,
-                    isSelected:false,
-                    x: 500,
-                    y:100,
-                },
-                {
-                    type: "State",
-                    name: "q3",
-                    isDragged:false,
-                    isSelected:false,
-                    x: 700,
-                    y:100,
-                    isFinal:true
-                },
+                ...this.getContentData()
             ],
             
             selectedItem:undefined,
-            dragItem:undefined
+            dragItem:undefined,
+            scale:0.9
         }
-        this.state.content.unshift(
-            {
-                start:this.state.content[0],
-                end:this.state.content[1],
-                isDragged:false,
-                    isSelected:false,
-                
-            },
-            {
-                start:this.state.content[1],
-                end:this.state.content[0],
-                isDragged:false,
-                    isSelected:false,
-                
-            },
-            {
-                start:this.state.content[1],
-                end:this.state.content[2],
-                isDragged:false,
-                    isSelected:false,
-                
-            },
-            {
-                start:this.state.content[0],
-                end:this.state.content[3],
-                isDragged:false,
-                    isSelected:false,
-                
-            },
-            
-            {
-                start:this.state.content[3],
-                end:this.state.content[1],
-                isDragged:false,
-                    isSelected:false,
-            },
-            {
-                start:this.state.content[1],
-                end:this.state.content[1],
-                isDragged:false,
-                    isSelected:false,
-            },
-        
-        );
+       
         
         //handles drag setting
         this.setDragItem = this.setDragItem.bind(this);
@@ -105,8 +31,8 @@ class Draw extends Component {
     moveChild(e) {
         if(this.state.dragItem) {
            
-            this.state.dragItem.x = e.nativeEvent.offsetX;
-            this.state.dragItem.y = e.nativeEvent.offsetY;
+            this.state.dragItem.x = e.nativeEvent.offsetX/this.state.scale;
+            this.state.dragItem.y = e.nativeEvent.offsetY/this.state.scale;
             this.setState({dragItem:this.state.dragItem});
         }
         e.stopPropagation();
@@ -137,9 +63,10 @@ class Draw extends Component {
    removeSelection(e) {
        if(this.state.selectedItem) {
         this.state.selectedItem.isSelected = false;
-       this.setState({selectedItem:undefined});
+        this.setState({selectedItem:undefined});
        }
    }
+   
 
     componentDidUpdate() {
         // console.log(this.state);
@@ -147,7 +74,41 @@ class Draw extends Component {
 
     render() {
 
-        let content = this.state.content.map((val,index) => {
+        let content = this.getContent();       
+        return (
+            
+            <div 
+            style={ {
+                overflow: 'scroll', 
+                padding:5,height:window.innerHeight - window.innerHeight*0.12
+            } }
+             
+            className="container col-12 col-lg-9">
+
+                <svg  
+                     width="300%" height="300%"
+                    style={{background: "white"}} 
+                    onMouseMove={this.moveChild} 
+                    onMouseUp={this.removeDrag}
+                    onMouseDown= {this.removeSelection}
+                    onTouchMove={this.moveChild}
+                    
+                >
+                    
+                   <g transform={`scale(${this.state.scale})`}>
+                    {content}
+                    </g>
+                </svg>
+                
+            </div>
+
+            
+        );
+    }
+
+
+    getContent() {
+        return this.state.content.map((val,index) => {
             if(val.type == 'State') {
                 return (
                 <State key={index} 
@@ -163,53 +124,65 @@ class Draw extends Component {
             } else {
                 return    ( 
                 <StateArc key={index} 
-                index={index}
-                isSelected={val.isSelected}
+                    index={index}
+                    isSelected={val.isSelected}
                     start={ {x:val.start.x ,y: val.start.y } }
                     end={ {x: val.end.x,y:val.end.y} } 
                     invert={val.invert} 
-                    onMouseDown={this.setDragItem}/>
+                    onMouseDown={this.setDragItem}
+                    input = {val.input}/>
+
                 )
             }
             
             
         } );
-        // let arc = this.state.arc.map((val,index) => {
-        //     return     <StateArc key={index} 
-        //     start={ {x:val.start.x ,y: val.start.y } }
-        //      end={ {x: val.end.x,y:val.end.y} } 
-        //      invert={val.invert} 
-        //      onMouseDown={this.setDragItem}/>
-        // })
-        
-        return (
-            
-            <div 
-            style={ {
-                overflow: 'scroll', 
-                padding:5,height:window.innerHeight - window.innerHeight*0.09
-            } }
-             
-            className="container-fluid col-12 col-md-9">
 
-                <svg  
-                    height="2000px" width="4000px" 
-                    style={{background: "white"}} 
-                    onMouseMove={this.moveChild} 
-                    onMouseUp={this.removeDrag}
-                    onMouseDown= {this.removeSelection}
-                    onTouchMove={this.moveChild}
-                >
-                    
-                   
-                    {content}
-                </svg>
-                
-            </div>
-
-            
-        );
     }
+
+    getContentData() {
+        let tuples = this.props.tuples;
+        let y = 300;
+        let x = -100;
+        
+        let stateContent = [];
+        tuples.state.forEach( state=> {
+            stateContent.push({
+                type: "State",
+                name: state,
+                isDragged:false,
+                isSelected:false,
+                x:x+=200,
+                y:y,
+                isStart:tuples.initial == state,
+                isFinal: ! (tuples.final.findIndex( val => val === state) == -1)
+            });
+        });
+
+        let linkContent = [];
+        for(let state in tuples.transition) {
+            for(let input in tuples.transition[state]) {
+                let start = stateContent.find(s => s.name == state);
+                let end = stateContent.find(s => s.name == tuples.transition[state][input][0]);
+                let link = linkContent.find(link => link.start == start && link.end == end);
+                if(!link) {
+                    linkContent.push ({
+                        start,
+                        end,
+                        input : [input],
+                        isDragged:false,
+                        isSelected:false,
+                    });
+                 } else {
+                     link.input.push(input)
+                 }
+            }
+        }
+
+        return [...linkContent,...stateContent];
+
+    }
+
 }
 
 export default Draw;

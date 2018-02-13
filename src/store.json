@@ -1,7 +1,7 @@
 {
     "theme" : "dark",
     "color": "#74a7da",
-    "placement": "fixed-top",
+    
     "brand": {
         "text": "Automata",
         "src": "http://www.energysys.com/wp-content/uploads/2012/03/Energysys_avatar-logo-transparent-bg.png"

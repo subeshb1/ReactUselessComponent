@@ -81,44 +81,50 @@ class StateArc extends Component {
         return (
             !same?
                 <g 
+                
              > 
                 
                 <path
-                 d={ ` M ${start.x} ${start.y} Q ${ctrPt.x} ${ctrPt.y} ${end.x} ${end.y}` } 
-                 stroke="black" fill="transparent" 
+                 d={ ` M ${start.x} ${start.y} Q ${ctrPt.x} ${ctrPt.y} ${end.x} ${end.y} ` } 
+                 stroke="black" fill="none" 
                  strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'' }/>
-                <polygon onMouseDown={this.enableSelect} 
+                <polygon onMouseDown={this.enableSelect} style={{cursor:'move'}}
                 points={` ${text[0].x},${text[0].y},${text[1].x},${text[1].y},${text[2].x},${text[2].y} `} 
                 stroke="black" fill="grey" strokeWidth="2px"/>
-                <text 
+                <text fontSize="20"
                 x="0" y="0"  
                 transform={ Math.abs(angel) >= 140 && Math.abs(angel) <= 180? ` rotate(${angel} ${text[0].x} ${text[0].y}) translate( ${text[0].x-5},${text[0].y-30}) scale(-1 -1) `:` rotate(${angel} ${text[0].x} ${text[0].y}) translate( ${text[0].x-5},${text[0].y-20}) `} 
                 textAnchor="middle">
-                a,b
+                {this.props.input.join(',')}
                 </text>
             </g>
             :
             <g 
+            style={{cursor:'move'}}
              > 
                 
                 <path
                  d={ ` M ${start.x} ${start.y} C ${start.x-120} ${start.y-120} ${start.x+120} ${start.y-120} ${end.x} ${end.y}` } 
-                 stroke="black" fill="transparent" 
+                 stroke="black" fill="none" 
                  strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'' }/>
-                <polygon onMouseDown={this.enableSelect} 
+                <polygon onMouseDown={this.enableSelect} style={{cursor:'move'}}
                 points={` ${start.x+5 },${start.y-90},${start.x-5},${start.y-100},${start.x-5},${start.y-80} `} 
                 stroke="black" fill="grey" strokeWidth="2px"/>
                 <text 
                 x={start.x+5 } y={start.y-110} 
-                 
+                fontSize="20"
                 textAnchor="middle">
-                a,b
+                {this.props.input.join(',')}
                 </text>
             </g>
 
         );
 
     }
+}
+
+StateArc.defaultProps = {
+    input :[]
 }
 
 export default StateArc;
