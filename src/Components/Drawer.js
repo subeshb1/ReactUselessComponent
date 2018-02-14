@@ -4,13 +4,13 @@ import Draw from '../utils/svg/draw';
 import MenuBar from './menu';
 import ToolBar from './tool-bar';
 let tuples = {
-    state:['q0','q1','q2','q3'],
+    state:['q0','q1','q2','q3','q4'],
     alphabet:['0', '1'],
     initial:['q0'],
     final:['q0'],
     transition: {
         q0: {
-            0:['q1'],
+            0:['q4'],
             1:['q2']
         },
         q1: {
@@ -25,6 +25,10 @@ let tuples = {
             0:['q2'],
             1:['q1']
         },
+        q4: {
+            0:['q4'],
+            1:['q4']
+        }
     }
     
 }
