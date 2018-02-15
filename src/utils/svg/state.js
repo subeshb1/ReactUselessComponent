@@ -25,13 +25,14 @@ class State extends Component {
         return (
             <g 
             onMouseDown={this.enableDrag}            
+            onTouchStart={this.enableDrag}            
             style={{cursor:'move'}} >
 
-                {this.props.isFinal? <circle cx={x} cy={y} r="45" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/> : "" }
+                {this.props.isFinal? <circle cx={x} cy={y} r="45" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":"0"}/> : "" }
                 {this.props.isStart? <path d={`M ${x-70} ${y-3} ${x-50} ${y-3} ${x-50} ${y-10}  ${x-40} ${y}  ${x-50} ${y+10}  ${x-50} ${y+3} ${x-70} ${y+3} Z`  }
                     stroke="black" strokeWidth='2' fill="grey"
                 />: ""}
-                <circle cx={x} cy={y} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":""}/>
+                <circle cx={x} cy={y} r="40" strokeWidth="2" stroke="black" fill="white" strokeDasharray={this.props.isSelected?"4":"0"}/>
                 <text x={x} y={y} textAnchor="middle"> {this.props.text} </text>
             
             </g>

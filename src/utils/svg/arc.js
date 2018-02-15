@@ -87,7 +87,7 @@ class StateArc extends Component {
                 <path
                  d={ ` M ${start.x} ${start.y} Q ${ctrPt.x} ${ctrPt.y} ${end.x} ${end.y} ` } 
                  stroke="black" fill="none" 
-                 strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'' }/>
+                 strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'0' }/>
                 <polygon onMouseDown={this.enableSelect} style={{cursor:'move'}}
                 points={` ${text[0].x},${text[0].y},${text[1].x},${text[1].y},${text[2].x},${text[2].y} `} 
                 stroke="black" fill="grey" strokeWidth="2px"/>
@@ -106,7 +106,7 @@ class StateArc extends Component {
                 <path
                  d={ ` M ${start.x} ${start.y} C ${start.x-120} ${start.y-120} ${start.x+120} ${start.y-120} ${end.x} ${end.y}` } 
                  stroke="black" fill="none" 
-                 strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'' }/>
+                 strokeWidth="2px" strokeDasharray={ this.props.isSelected?"5":'0' }/>
                 <polygon onMouseDown={this.enableSelect} style={{cursor:'move'}}
                 points={` ${start.x+5 },${start.y-90},${start.x-5},${start.y-100},${start.x-5},${start.y-80} `} 
                 stroke="black" fill="grey" strokeWidth="2px"/>

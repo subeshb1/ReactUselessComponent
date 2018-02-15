@@ -21,11 +21,11 @@ class ToolBar extends Component {
                             refX="-2" refY="0" 
                             markerUnits="strokeWidth" 
                             orient="auto">
-                        <polygon points="-2,0 -5,5 5,0 -5,-5" fill="black" stroke="black" stroke-width="1px"/>
+                        <polygon points="-2,0 -5,5 5,0 -5,-5" fill="black" stroke="black" strokeWidth="1px"/>
                     </marker>
                     </defs>
                         
-                    <path d="M 10,10 Q 100,250 180,100" stroke="black" fill="none" stroke-width="5px" marker-end="url(#Arrow)"/>
+                    <path d="M 10,10 Q 100,250 180,100" stroke="black" fill="none" strokeWidth="5px" markerEnd="url(#Arrow)"/>
 
              </svg>
                 </button>

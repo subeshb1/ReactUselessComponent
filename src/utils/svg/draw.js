@@ -15,7 +15,8 @@ class Draw extends Component {
             
             selectedItem:undefined,
             dragItem:undefined,
-            scale:0.9
+            scale:0.5,
+            touchAction:'auto'
         }
        
         
@@ -29,12 +30,22 @@ class Draw extends Component {
     
     //to move a Child (mouseMove)
     moveChild(e) {
+        e.preventDefault();
         if(this.state.dragItem) {
+            let rect = e.currentTarget.getBoundingClientRect();
+            let clientX = e.clientX || e.touches[0].clientX;
+            let clientY = e.clientY || e.touches[0].clientY;
+            let offsetX = clientX - rect.left;
+            let offsetY = clientY - rect.top;
+            // console.log(e);
            
-            this.state.dragItem.x = e.nativeEvent.offsetX/this.state.scale;
-            this.state.dragItem.y = e.nativeEvent.offsetY/this.state.scale;
+            this.state.dragItem.x = offsetX/this.state.scale;
+            this.state.dragItem.y = offsetY/this.state.scale;
+            
             this.setState({dragItem:this.state.dragItem});
         }
+        
+        
         e.stopPropagation();
 
     }
@@ -43,7 +54,7 @@ class Draw extends Component {
     removeDrag(e) {
         if(this.state.dragItem) {
             this.state.dragItem.isDragged=false
-            this.setState({dragItem: undefined});
+            this.setState({dragItem: undefined,touchAction:'none'});
         }
     }
 
@@ -55,15 +66,17 @@ class Draw extends Component {
         dragItem.isDragged = true;
         dragItem.isSelected = true;
        
-        this.setState({dragItem,selectedItem:dragItem});
+        this.setState({dragItem,selectedItem:dragItem,touchAction:'none'});
         
     }    
 
    //Remove Selection (onClick)
    removeSelection(e) {
+       
        if(this.state.selectedItem) {
-        this.state.selectedItem.isSelected = false;
-        this.setState({selectedItem:undefined});
+            this.state.selectedItem.isSelected = false;
+            console.log("Removed",this.state);
+            this.setState({selectedItem:undefined,touchAction:'auto'});
        }
    }
    
@@ -87,9 +100,10 @@ class Draw extends Component {
 
                 <svg  
                      width="300%" height="300%"
-                    style={{background: "white"}} 
+                    style={{background: "white",touchAction:this.state.touchAction}} 
                     onMouseMove={this.moveChild} 
                     onMouseUp={this.removeDrag}
+                    onTouchEnd={this.removeDrag}
                     onMouseDown= {this.removeSelection}
                     onTouchMove={this.moveChild}
                     
