@@ -30,7 +30,7 @@ class Draw extends Component {
     
     //to move a Child (mouseMove)
     moveChild(e) {
-        e.preventDefault();
+        // e.preventDefault();
         if(this.state.dragItem) {
             let rect = e.currentTarget.getBoundingClientRect();
             let clientX = e.clientX || e.touches[0].clientX;
@@ -65,8 +65,9 @@ class Draw extends Component {
             this.state.selectedItem.isSelected = false;
         dragItem.isDragged = true;
         dragItem.isSelected = true;
-       
+        this.props.setSelected(dragItem);
         this.setState({dragItem,selectedItem:dragItem,touchAction:'none'});
+        
         
     }    
 
@@ -77,6 +78,7 @@ class Draw extends Component {
             this.state.selectedItem.isSelected = false;
             console.log("Removed",this.state);
             this.setState({selectedItem:undefined,touchAction:'auto'});
+            this.props.setSelected(undefined);
        }
    }
    
@@ -95,40 +97,34 @@ class Draw extends Component {
             className="container-fluid col-12 col-lg-9 p-0 px-lg-2"
             
            >
-
-                
                 <div
                      style={ {
                         overflow: 'scroll', 
                         height:window.innerHeight - window.innerHeight*0.12,
                         
                     } }
-                    className="container-fluid col-12"
-                >
-                <svg  
-                    className="position-absolute"
-                     width="300%" height="300%"
-                    style={{background: "white",touchAction:this.state.touchAction,top:0,left:0}} 
-                    onMouseMove={this.moveChild} 
-                    onMouseUp={this.removeDrag}
-                    onTouchEnd={this.removeDrag}
-                    onMouseDown= {this.removeSelection}
-                    onTouchMove={this.moveChild}
+                    className="container-fluid col-12">
+                    <svg  
+                        className="position-absolute"
+                        width="300%" height="300%"
+                        style={{background: "white",touchAction:this.state.touchAction,top:0,left:0}} 
+                        onMouseMove={this.moveChild} 
+                        onMouseUp={this.removeDrag}
+                        onTouchEnd={this.removeDrag}
+                        onMouseDown= {this.removeSelection}
+                        onTouchMove={this.moveChild}>
                     
-                >
-                
-                   <g transform={`scale(${this.state.scale})`}>
-                    {content}
-                    </g>
-                </svg>
+                    <g transform={`scale(${this.state.scale})`}>
+                        {content}
+                        </g>
+                    </svg>
                 </div>
                
                 <div className=" position-absolute p-1" 
-                    style={{top:0}} 
-                >
+                    style={{top:0}} >
                     <div className="btn-group" hidden={this.state.selectedItem?true:false}>
-                        <button className="btn btn-primary" onClick={() => {this.setState({scale:this.state.scale+0.05})}}><i className="fa fa-plus"></i></button>
-                        <button className="btn btn-primary" onClick={() => {this.setState({scale:this.state.scale-0.05})}}><i className="fa fa-minus"></i></button>
+                        <button className="btn btn-dark" onClick={() => {this.setState({scale:this.state.scale+0.05})}}><i className="fa fa-plus"></i></button>
+                        <button className="btn btn-secondary" onClick={() => {this.setState({scale:this.state.scale-0.05})}}><i className="fa fa-minus"></i></button>
                     </div>
                 </div>    
             </div>

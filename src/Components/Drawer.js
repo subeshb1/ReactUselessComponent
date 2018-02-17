@@ -1,67 +1,82 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Draw from '../utils/svg/draw';
-import MenuBar from './menu';
-import ToolBar from './tool-bar';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Draw from "../utils/svg/draw";
+import MenuBar from "./menu";
+import ToolBar from "./tool-bar";
+import SettingsBar from "./settings-bar";
 let tuples = {
-    state:['q0','q1','q2','q3','q4'],
-    alphabet:['0', '1'],
-    initial:['q0'],
-    final:['q0'],
-    transition: {
-        q0: {
-            0:['q4'],
-            1:['q2']
-        },
-        q1: {
-            0:['q0'],
-            1:['q3']
-        },
-        q2: {
-            0:['q3'],
-            1:['q0']
-        },
-        q3: {
-            0:['q2'],
-            1:['q1']
-        },
-        q4: {
-            0:['q4'],
-            1:['q4']
+  state: ["A", "B", "C", "D", "E", "F", "G", "H"],
+  alphabet: ["0", "1"],
+  initial: ["A"],
+  final: ["C"],
+  transition: {
+    A: {
+      0: ["B"],
+      1: ["F"]
+    },
+    B: {
+      0: ["G"],
+      1: ["C"]
+    },
+    C: {
+      0: ["A"],
+      1: ["C"]
+    },
+    D: {
+      0: ["C"],
+      1: ["G"]
+    },
+    E: {
+      0: ["H"],
+      1: ["F"]
+    },
+    F: {
+      0: ["C"],
+      1: ["G"]
+    },
+    G: {
+      0: ["G"],
+      1: ["E"]
+    },
+    H: {
+      0: ["G"],
+      1: ["C"]
+    }
+  }
+};
+class Drawer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedItem: undefined
         }
     }
     
-}
-class Drawer extends Component {
-    render() {
-        return (
-           
-            <div style = {{background:'#e7e7e7'}}
-            className="container-fluid">   
-
-            {/* MenuBar */}
-            
-            <MenuBar />
-            
-            <div className='row  mx-auto ' style={{marginTop:-10}}> 
-
-                {/* Tools Menu */}
-                {/* <div className="col-12 col-lg-1"> ds</div> */}
-                <ToolBar />
-                {/* Drawer */}
-                <Draw tuples={tuples} zoom={0.7}/>
-                {/*Settings*/}
-                <div className="col-12 col-lg-2 bg-light"> ds</div>
-                </div>
-            </div>
-
-
-        );
+    setSelected(item) {
+        this.setState({selectedItem:item});
     }
+
+  render() {
+    return (
+      <div style={{ background: "#e7e7e7" }} className="container-fluid">
+        {/* MenuBar */}
+
+        <MenuBar />
+
+        <div className="row  mx-auto " style={{ marginTop: -10 }}>
+          {/* Tools Menu */}
+          {/* <div className="col-12 col-lg-1"> ds</div> */}
+          <ToolBar />
+          {/* Drawer */}
+          <Draw tuples={tuples} setSelected={this.setSelected.bind(this)} />
+          {/*Settings*/}
+          <SettingsBar selectedItem={this.state.selectedItem}/>
+        </div>
+      </div>
+    );
+  }
 }
 
-Drawer.propTypes = {
-
-}; 
+Drawer.propTypes = {};
 
 export default Drawer;
