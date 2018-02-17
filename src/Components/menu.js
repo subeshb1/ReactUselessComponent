@@ -4,21 +4,25 @@ import PropTypes from 'prop-types';
 class MenuBar extends Component {
     render() {
         return (
+          
+            <ul className="list-inline bg-light pl-5 mx-auto " style={{overflowX:"auto",whiteSpace:"nowrap"}}>
             
-            <ul className="nav  bg-light pl-5 ">
-            <li className="nav-item">
+            <li className=" list-inline-item" style={{display:'inline-block',float:'none'}}>
               <a className="nav-link text-dark " href="#">File</a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Save</a>
+            <li className=" list-inline-item" style={{display:'inline-block',float:'none'}}>
+              <a className="nav-link text-dark " href="#">Save</a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Undo</a>
+            <li className=" list-inline-item" style={{display:'inline-block',float:'none'}}>
+              <a className="nav-link text-dark " href="#">Redo</a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link disabled" href="#">Red</a>
+            <li className=" list-inline-item" style={{display:'inline-block',float:'none'}}>
+              <a className="nav-link text-dark " href="#">Undo</a>
             </li>
+            
+            
           </ul>
+          
           
         );
     }

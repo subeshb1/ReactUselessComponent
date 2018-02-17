@@ -15,7 +15,7 @@ class Draw extends Component {
             
             selectedItem:undefined,
             dragItem:undefined,
-            scale:0.5,
+            scale:1,
             touchAction:'auto'
         }
        
@@ -91,16 +91,24 @@ class Draw extends Component {
         return (
             
             <div 
-            style={ {
-                overflow: 'scroll', 
-                padding:5,height:window.innerHeight - window.innerHeight*0.12
-            } }
-             
-            className="container col-12 col-lg-9">
+           
+            className="container-fluid col-12 col-lg-9 p-0 px-lg-2"
+            
+           >
 
+                
+                <div
+                     style={ {
+                        overflow: 'scroll', 
+                        height:window.innerHeight - window.innerHeight*0.12,
+                        
+                    } }
+                    className="container-fluid col-12"
+                >
                 <svg  
+                    className="position-absolute"
                      width="300%" height="300%"
-                    style={{background: "white",touchAction:this.state.touchAction}} 
+                    style={{background: "white",touchAction:this.state.touchAction,top:0,left:0}} 
                     onMouseMove={this.moveChild} 
                     onMouseUp={this.removeDrag}
                     onTouchEnd={this.removeDrag}
@@ -108,12 +116,21 @@ class Draw extends Component {
                     onTouchMove={this.moveChild}
                     
                 >
-                    
+                
                    <g transform={`scale(${this.state.scale})`}>
                     {content}
                     </g>
                 </svg>
-                
+                </div>
+               
+                <div className=" position-absolute p-1" 
+                    style={{top:0}} 
+                >
+                    <div className="btn-group" hidden={this.state.selectedItem?true:false}>
+                        <button className="btn btn-primary" onClick={() => {this.setState({scale:this.state.scale+0.05})}}><i className="fa fa-plus"></i></button>
+                        <button className="btn btn-primary" onClick={() => {this.setState({scale:this.state.scale-0.05})}}><i className="fa fa-minus"></i></button>
+                    </div>
+                </div>    
             </div>
 
             

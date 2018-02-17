@@ -43,13 +43,13 @@ class Drawer extends Component {
             
             <MenuBar />
             
-            <div className='row  mx-auto mt-1'> 
+            <div className='row  mx-auto ' style={{marginTop:-10}}> 
 
                 {/* Tools Menu */}
                 {/* <div className="col-12 col-lg-1"> ds</div> */}
                 <ToolBar />
                 {/* Drawer */}
-                <Draw tuples={tuples}/>
+                <Draw tuples={tuples} zoom={0.7}/>
                 {/*Settings*/}
                 <div className="col-12 col-lg-2 bg-light"> ds</div>
                 </div>
