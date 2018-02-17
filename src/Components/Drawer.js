@@ -62,6 +62,6 @@ class Drawer extends Component {
 
 Drawer.propTypes = {
 
-};
+}; 
 
 export default Drawer;
