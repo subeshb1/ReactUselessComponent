@@ -32,6 +32,7 @@ class Draw extends Component {
     moveChild(e) {
         // e.preventDefault();
         if(this.state.dragItem) {
+            this.props.setSelected(this.state.dragItem);
             let rect = e.currentTarget.getBoundingClientRect();
             let clientX = e.clientX || e.touches[0].clientX;
             let clientY = e.clientY || e.touches[0].clientY;
@@ -55,7 +56,9 @@ class Draw extends Component {
         if(this.state.dragItem) {
             this.state.dragItem.isDragged=false
             this.setState({dragItem: undefined,touchAction:'none'});
+            
         }
+        
     }
 
     //set a item to be draged
@@ -91,7 +94,7 @@ class Draw extends Component {
 
         let content = this.getContent();       
         return (
-            
+                
             <div 
            
             className="container-fluid col-12 col-lg-9 p-0 px-lg-2"
@@ -100,7 +103,7 @@ class Draw extends Component {
                 <div
                      style={ {
                         overflow: 'scroll', 
-                        height:window.innerHeight - window.innerHeight*0.12,
+                        height:window.innerHeight - window.innerHeight*0.10,
                         
                     } }
                     className="container-fluid col-12">
@@ -136,7 +139,7 @@ class Draw extends Component {
 
     getContent() {
         return this.state.content.map((val,index) => {
-            if(val.type == 'State') {
+            if(val.type == 'STATE') {
                 return (
                 <State key={index} 
                     cx={val.x} cy={val.y} 
@@ -175,7 +178,7 @@ class Draw extends Component {
         let stateContent = [];
         tuples.state.forEach( state=> {
             stateContent.push({
-                type: "State",
+                type: "STATE",
                 name: state,
                 isDragged:false,
                 isSelected:false,
@@ -194,6 +197,7 @@ class Draw extends Component {
                 let link = linkContent.find(link => link.start == start && link.end == end);
                 if(!link) {
                     linkContent.push ({
+                        type: "ARC",
                         start,
                         end,
                         input : [input],

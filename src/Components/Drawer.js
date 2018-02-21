@@ -50,11 +50,13 @@ class Drawer extends Component {
         this.state = {
             selectedItem: undefined
         }
+        console.log(this.getContentData(tuples));
     }
     
     setSelected(item) {
         this.setState({selectedItem:item});
     }
+
 
   render() {
     return (
@@ -65,16 +67,63 @@ class Drawer extends Component {
 
         <div className="row  mx-auto " style={{ marginTop: -10 }}>
           {/* Tools Menu */}
-          {/* <div className="col-12 col-lg-1"> ds</div> */}
           <ToolBar />
           {/* Drawer */}
           <Draw tuples={tuples} setSelected={this.setSelected.bind(this)} />
           {/*Settings*/}
-          <SettingsBar selectedItem={this.state.selectedItem}/>
+          <SettingsBar selectedItem={this.state.selectedItem}  setSelected={this.setSelected.bind(this)}/>
         </div>
       </div>
     );
   }
+
+
+
+
+
+  getContentData(val) {
+    let tuples = val;
+    let y = 300;
+    let x = -100;
+    
+    let stateContent = [];
+    tuples.state.forEach( state=> {
+        stateContent.push({
+            type: "STATE",
+            name: state,
+            isDragged:false,
+            isSelected:false,
+            x:x+=200,
+            y:y,
+            isStart:tuples.initial == state,
+            isFinal: ! (tuples.final.findIndex( val => val === state) == -1)
+        });
+    });
+
+    let linkContent = [];
+    for(let state in tuples.transition) {
+        for(let input in tuples.transition[state]) {
+            let start = stateContent.find(s => s.name == state);
+            let end = stateContent.find(s => s.name == tuples.transition[state][input][0]);
+            let link = linkContent.find(link => link.start == start && link.end == end);
+            if(!link) {
+                linkContent.push ({
+                    type: "ARC",
+                    start,
+                    end,
+                    input : [input],
+                    isDragged:false,
+                    isSelected:false,
+                });
+             } else {
+                 link.input.push(input)
+             }
+        }
+    }
+
+    return [...linkContent,...stateContent];
+
+}
 }
 
 Drawer.propTypes = {};

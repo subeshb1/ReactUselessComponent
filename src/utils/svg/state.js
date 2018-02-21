@@ -11,9 +11,11 @@ class State extends Component {
 
   //Enable Drag
   enableDrag(evt) {
-    this.props.onMouseDown(this.props.index);
     evt.preventDefault();
     evt.stopPropagation();
+  
+    this.props.onMouseDown(this.props.index);
+   
   }
 
   render() {

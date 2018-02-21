@@ -95,7 +95,7 @@ class StateArc extends Component {
                 x="0" y="0"  
                 transform={ Math.abs(angel) >= 140 && Math.abs(angel) <= 180? ` rotate(${angel} ${text[0].x} ${text[0].y}) translate( ${text[0].x-5},${text[0].y-30}) scale(-1 -1) `:` rotate(${angel} ${text[0].x} ${text[0].y}) translate( ${text[0].x-5},${text[0].y-20}) `} 
                 textAnchor="middle">
-                {this.props.input.join(',')}
+                {this.props.input.filter(Boolean).join(',')}
                 </text>
             </g>
             :
@@ -114,7 +114,7 @@ class StateArc extends Component {
                 x={start.x+5 } y={start.y-110} 
                 fontSize="20"
                 textAnchor="middle">
-                {this.props.input.join(',')}
+                {this.props.input.filter(Boolean).join(',')}
                 </text>
             </g>
 
