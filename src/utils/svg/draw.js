@@ -9,14 +9,9 @@ class Draw extends Component {
         
         
         this.state = {
-            content: [
-                ...this.getContentData()
-            ],
-            
-            selectedItem:undefined,
-            dragItem:undefined,
-            scale:1,
-            touchAction:'auto'
+
+            scale:1,//k
+            touchAction:'auto'//k
         }
        
         
@@ -31,8 +26,7 @@ class Draw extends Component {
     //to move a Child (mouseMove)
     moveChild(e) {
         // e.preventDefault();
-        if(this.state.dragItem) {
-            this.props.setSelected(this.state.dragItem);
+        if(this.props.state.dragItem) {
             let rect = e.currentTarget.getBoundingClientRect();
             let clientX = e.clientX || e.touches[0].clientX;
             let clientY = e.clientY || e.touches[0].clientY;
@@ -40,9 +34,9 @@ class Draw extends Component {
             let offsetY = clientY - rect.top;
             // console.log(e);
            
-            this.state.dragItem.x = offsetX/this.state.scale;
-            this.state.dragItem.y = offsetY/this.state.scale;
-            
+            this.props.state.dragItem.x = offsetX/this.state.scale;
+            this.props.state.dragItem.y = offsetY/this.state.scale;
+            this.props.setSelected(this.props.state.dragItem);
             this.setState({dragItem:this.state.dragItem});
         }
         
@@ -53,9 +47,9 @@ class Draw extends Component {
 
     //Remove dragItem when mouse Released (mouseUp)
     removeDrag(e) {
-        if(this.state.dragItem) {
-            this.state.dragItem.isDragged=false
-            this.setState({dragItem: undefined,touchAction:'none'});
+        if(this.props.state.dragItem) {
+            this.props.state.dragItem.isDragged=false
+            this.props.update( {dragItem:this.props.state.dragItem.isDragged,selectedItem:null});
             
         }
         
@@ -63,24 +57,35 @@ class Draw extends Component {
 
     //set a item to be draged
     setDragItem(index) {
-        let dragItem = this.state.content[index];
-        if(this.state.selectedItem)
-            this.state.selectedItem.isSelected = false;
-        dragItem.isDragged = true;
-        dragItem.isSelected = true;
-        this.props.setSelected(dragItem);
-        this.setState({dragItem,selectedItem:dragItem,touchAction:'none'});
+        // console.log("Enter");
+        // let dragItem = this.props.state.content[index];
+        // if(this.props.state.selectedItem)
+        //     this.props.state.selectedItem.isSelected = false;
+        // dragItem.isDragged = true;
+        // dragItem.isSelected = true;
+        // this.props.update( {dragItem,selectedItem:dragItem});
+        // this.setState({touchAction:'none'});
         
+        let item = Object.assign({},this.props.content[index]);
+        let selectedItem = Object.assign({},this.props.selectedItem);
+       
+        selectedItem.index = index;
+        selectedItem.item = item;
+        item.isSelected = true;
+        selectedItem.isDragged = true;
+        this.props.update1( selectedItem);
+        this.setState({touchAction:'none'});
         
-    }    
+    }
+        
 
    //Remove Selection (onClick)
    removeSelection(e) {
        
-       if(this.state.selectedItem) {
-            this.state.selectedItem.isSelected = false;
+       if(this.props.state.selectedItem) {
+            this.props.state.selectedItem.isSelected = false;
             console.log("Removed",this.state);
-            this.setState({selectedItem:undefined,touchAction:'auto'});
+            this.setState({touchAction:'auto'});
             this.props.setSelected(undefined);
        }
    }
@@ -91,7 +96,6 @@ class Draw extends Component {
     }
 
     render() {
-
         let content = this.getContent();       
         return (
                 
@@ -111,11 +115,12 @@ class Draw extends Component {
                         className="position-absolute"
                         width="300%" height="300%"
                         style={{background: "white",touchAction:this.state.touchAction,top:0,left:0}} 
-                        onMouseMove={this.moveChild} 
-                        onMouseUp={this.removeDrag}
-                        onTouchEnd={this.removeDrag}
-                        onMouseDown= {this.removeSelection}
-                        onTouchMove={this.moveChild}>
+                        // onMouseMove={this.moveChild} 
+                        // onMouseUp={this.removeDrag}
+                        // onTouchEnd={this.removeDrag}
+                        // onMouseDown= {this.removeSelection}
+                        // onTouchMove={this.moveChild}
+                        >
                     
                     <g transform={`scale(${this.state.scale})`}>
                         {content}
@@ -138,13 +143,12 @@ class Draw extends Component {
 
 
     getContent() {
-        return this.state.content.map((val,index) => {
+        return this.props.content.map((val,index) => {
             if(val.type == 'STATE') {
                 return (
                 <State key={index} 
                     cx={val.x} cy={val.y} 
                     index={index} text={val.name} 
-                    isDragged={val.isDragged}
                     isSelected={val.isSelected}
                     onMouseDown={this.setDragItem}
                     isStart={val.isStart}
@@ -170,49 +174,7 @@ class Draw extends Component {
 
     }
 
-    getContentData() {
-        let tuples = this.props.tuples;
-        let y = 300;
-        let x = -100;
-        
-        let stateContent = [];
-        tuples.state.forEach( state=> {
-            stateContent.push({
-                type: "STATE",
-                name: state,
-                isDragged:false,
-                isSelected:false,
-                x:x+=200,
-                y:y,
-                isStart:tuples.initial == state,
-                isFinal: ! (tuples.final.findIndex( val => val === state) == -1)
-            });
-        });
-
-        let linkContent = [];
-        for(let state in tuples.transition) {
-            for(let input in tuples.transition[state]) {
-                let start = stateContent.find(s => s.name == state);
-                let end = stateContent.find(s => s.name == tuples.transition[state][input][0]);
-                let link = linkContent.find(link => link.start == start && link.end == end);
-                if(!link) {
-                    linkContent.push ({
-                        type: "ARC",
-                        start,
-                        end,
-                        input : [input],
-                        isDragged:false,
-                        isSelected:false,
-                    });
-                 } else {
-                     link.input.push(input)
-                 }
-            }
-        }
-
-        return [...linkContent,...stateContent];
-
-    }
+    
 
 }
 
