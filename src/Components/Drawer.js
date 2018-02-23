@@ -47,70 +47,40 @@ let tuples = {
 class Drawer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      content: [...this.getContentData(tuples)],
-
-      // selectedItem: undefined,
-      // dragItem: undefined,
-      selectedItem: {
-        item: undefined,
-        index:undefined,
-        isDragged:false
-
-      }
-    };
-    console.log(this.getContentData(tuples));
+    this.state = this.getContentData(tuples);
   }
 
-  setSelected(item) {
-    this.setState({ selectedItem: item });
+  update(selectedItem,hasInitial) {
+    if(hasInitial === undefined || typeof hasInitial !== "boolean")
+      hasInitial = this.state.hasInitial;
+    if (selectedItem) {
+      let mappedContent = this.state.content.map(obj => Object.assign({}, obj));
+
+      if (selectedItem.item && selectedItem.index !== undefined) {
+        if (
+          this.state.selectedItem.item &&
+          this.state.selectedItem.index !== selectedItem
+        ) {
+          mappedContent[this.state.selectedItem.index].isSelected = false;
+        }
+        mappedContent[selectedItem.index] = selectedItem.item;
+      } else if (selectedItem.index !== undefined) {
+        mappedContent[selectedItem.index].isSelected = false;
+        selectedItem.index = undefined;
+        selectedItem.isDragged = false;
+      } else throw new TypeError("Invalid selected Item");
+
+      this.setState({ content: mappedContent, selectedItem,hasInitial });
+    } else {
+      throw new TypeError("Excepts a defined param");
+    }
   }
 
-  update({selectedItem,dragItem}) { 
-    if(selectedItem !== null && dragItem !== null) {
-      this.setState({ selectedItem,dragItem });
-    } else if(selectedItem !== null ) {
-      this.setState({ selectedItem });
-    } else if(dragItem !== null ) {
-      this.setState({ dragItem });
-    } else
-      throw new TypeError ("None of the params match");
-  }
-
-  update1(selectedItem) {
-      if(selectedItem) {
-        let mappedContent = this.state.content.map (obj => Object.assign({},obj));
-
-        if(selectedItem.item && selectedItem.index !== undefined) {
-
-          if(this.state.selectedItem.item) {
-            mappedContent[this.state.selectedItem.index].isSelected = false;
-          }
-          mappedContent[selectedItem.index] = selectedItem.item;
-          
-        } else if(selectedItem.index !== undefined){
-          mappedContent[selectedItem.index].isSelected = false;
-          mappedContent[selectedItem.index]['sdsd'] = false;
-          selectedItem.index = undefined;
-          selectedItem.isDragged = false;
-          
-        } else 
-          throw new TypeError("Invalid selected Item");
-
-          
-        this.setState({content:mappedContent,selectedItem});
-      } else {
-        throw new TypeError("Excepts a defined param");
-      }
-  }
-
-  componentWillUpdate(np,ns) {
-    console.log(this.state.content,ns.content);
-  }
   componentDidUpdate() {
-    console.log(this.state);
+    // console.log(this.state);
   }
   render() {
+    let mappedContent = this.state.content.map(obj => Object.assign({}, obj));
     return (
       <div style={{ background: "#e7e7e7" }} className="container-fluid">
         {/* MenuBar */}
@@ -122,17 +92,17 @@ class Drawer extends Component {
           <ToolBar />
           {/* Drawer */}
           <Draw
-            content={this.state.content}
-            selectedItem={this.state.selectedItem}
-            setSelected={this.setSelected.bind(this)}
+            content={mappedContent}
+            selectedItem={Object.assign({}, this.state.selectedItem)}
             update={this.update.bind(this)}
-            update1={this.update1.bind(this)}
           />
           {/*Settings*/}
-          {/* <SettingsBar
-            selectedItem={this.state.selectedItem}
-            setSelected={this.setSelected.bind(this)}
-          /> */}
+          <SettingsBar
+            content={mappedContent}
+            selectedItem={Object.assign({}, this.state.selectedItem)}
+            update={this.update.bind(this)}
+            hasInitial={this.state.hasInitial}
+          />
         </div>
       </div>
     );
@@ -142,8 +112,9 @@ class Drawer extends Component {
     let tuples = val;
     let y = 300;
     let x = -100;
-
+    let index = 0;
     let stateContent = [];
+    let hasInitial = true;
     tuples.state.forEach(state => {
       stateContent.push({
         type: "STATE",
@@ -152,7 +123,8 @@ class Drawer extends Component {
         x: (x += 200),
         y: y,
         isStart: tuples.initial == state,
-        isFinal: !(tuples.final.findIndex(val => val === state) == -1)
+        isFinal: !(tuples.final.findIndex(val => val === state) == -1),
+        index: index++
       });
     });
 
@@ -169,10 +141,11 @@ class Drawer extends Component {
         if (!link) {
           linkContent.push({
             type: "ARC",
-            start,
-            end,
+            start: start.index,
+            end: end.index,
             input: [input],
-            isSelected: false
+            isSelected: false,
+            index: index++
           });
         } else {
           link.input.push(input);
@@ -180,7 +153,20 @@ class Drawer extends Component {
       }
     }
 
-    return [...linkContent, ...stateContent];
+    // return [ ...stateContent, ...linkContent];
+
+    let state = {
+      content: [...stateContent, ...linkContent],
+
+      hasInitial,
+      selectedItem: {
+        item: undefined,
+        index: undefined,
+        isDragged: false
+      }
+    };
+
+    return state;
   }
 }
 

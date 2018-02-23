@@ -26,18 +26,18 @@ class Draw extends Component {
     //to move a Child (mouseMove)
     moveChild(e) {
         // e.preventDefault();
-        if(this.props.state.dragItem) {
+        let selectedItem = Object.assign({},this.props.selectedItem);
+
+        if(selectedItem.isDragged) {
+            
             let rect = e.currentTarget.getBoundingClientRect();
             let clientX = e.clientX || e.touches[0].clientX;
             let clientY = e.clientY || e.touches[0].clientY;
             let offsetX = clientX - rect.left;
             let offsetY = clientY - rect.top;
-            // console.log(e);
-           
-            this.props.state.dragItem.x = offsetX/this.state.scale;
-            this.props.state.dragItem.y = offsetY/this.state.scale;
-            this.props.setSelected(this.props.state.dragItem);
-            this.setState({dragItem:this.state.dragItem});
+            selectedItem.item.x = offsetX/this.state.scale;
+            selectedItem.item.y = offsetY/this.state.scale;
+            this.props.update(selectedItem);
         }
         
         
@@ -47,46 +47,43 @@ class Draw extends Component {
 
     //Remove dragItem when mouse Released (mouseUp)
     removeDrag(e) {
-        if(this.props.state.dragItem) {
-            this.props.state.dragItem.isDragged=false
-            this.props.update( {dragItem:this.props.state.dragItem.isDragged,selectedItem:null});
-            
+        
+        let selectedItem = Object.assign({},this.props.selectedItem);
+        if(selectedItem.isDragged) {
+
+            selectedItem.isDragged = false;
+            this.props.update( selectedItem );
+
         }
         
     }
 
     //set a item to be draged
     setDragItem(index) {
-        // console.log("Enter");
-        // let dragItem = this.props.state.content[index];
-        // if(this.props.state.selectedItem)
-        //     this.props.state.selectedItem.isSelected = false;
-        // dragItem.isDragged = true;
-        // dragItem.isSelected = true;
-        // this.props.update( {dragItem,selectedItem:dragItem});
-        // this.setState({touchAction:'none'});
+       
         
         let item = Object.assign({},this.props.content[index]);
         let selectedItem = Object.assign({},this.props.selectedItem);
-       
         selectedItem.index = index;
         selectedItem.item = item;
         item.isSelected = true;
         selectedItem.isDragged = true;
-        this.props.update1( selectedItem);
         this.setState({touchAction:'none'});
+        this.props.update( selectedItem);
         
     }
         
 
    //Remove Selection (onClick)
    removeSelection(e) {
+       let selectedItem =  Object.assign({},this.props.selectedItem);
        
-       if(this.props.state.selectedItem) {
-            this.props.state.selectedItem.isSelected = false;
-            console.log("Removed",this.state);
+       if(selectedItem.item) {
+
+            selectedItem.item = undefined;
+            this.props.update(selectedItem);
             this.setState({touchAction:'auto'});
-            this.props.setSelected(undefined);
+
        }
    }
    
@@ -103,7 +100,7 @@ class Draw extends Component {
            
             className="container-fluid col-12 col-lg-9 p-0 px-lg-2"
             
-           >
+            >
                 <div
                      style={ {
                         overflow: 'scroll', 
@@ -115,11 +112,11 @@ class Draw extends Component {
                         className="position-absolute"
                         width="300%" height="300%"
                         style={{background: "white",touchAction:this.state.touchAction,top:0,left:0}} 
-                        // onMouseMove={this.moveChild} 
-                        // onMouseUp={this.removeDrag}
-                        // onTouchEnd={this.removeDrag}
-                        // onMouseDown= {this.removeSelection}
-                        // onTouchMove={this.moveChild}
+                        onMouseMove={this.moveChild} 
+                        onMouseUp={this.removeDrag}
+                        onTouchEnd={this.removeDrag}
+                        onMouseDown= {this.removeSelection}
+                        onTouchMove={this.moveChild}
                         >
                     
                     <g transform={`scale(${this.state.scale})`}>
@@ -130,7 +127,7 @@ class Draw extends Component {
                
                 <div className=" position-absolute p-1" 
                     style={{top:0}} >
-                    <div className="btn-group" hidden={this.state.selectedItem?true:false}>
+                    <div className="btn-group" hidden={this.props.selectedItem.item?true:false}>
                         <button className="btn btn-dark" onClick={() => {this.setState({scale:this.state.scale+0.05})}}><i className="fa fa-plus"></i></button>
                         <button className="btn btn-secondary" onClick={() => {this.setState({scale:this.state.scale-0.05})}}><i className="fa fa-minus"></i></button>
                     </div>
@@ -143,12 +140,14 @@ class Draw extends Component {
 
 
     getContent() {
-        return this.props.content.map((val,index) => {
+        let content = this.props.content;
+        let mappedContent = content.map( ob => Object.assign({},ob));
+        return mappedContent.reverse().map((val,index) => {
             if(val.type == 'STATE') {
                 return (
                 <State key={index} 
                     cx={val.x} cy={val.y} 
-                    index={index} text={val.name} 
+                    index={val.index} text={val.name} 
                     isSelected={val.isSelected}
                     onMouseDown={this.setDragItem}
                     isStart={val.isStart}
@@ -158,10 +157,10 @@ class Draw extends Component {
             } else {
                 return    ( 
                 <StateArc key={index} 
-                    index={index}
+                    index={val.index}
                     isSelected={val.isSelected}
-                    start={ {x:val.start.x ,y: val.start.y } }
-                    end={ {x: val.end.x,y:val.end.y} } 
+                    start={ {x:  content[val.start].x ,y: content[val.start].y } }
+                    end={ {x:content[val.end].x,y:content[val.end].y} } 
                     invert={val.invert} 
                     onMouseDown={this.setDragItem}
                     input = {val.input}/>

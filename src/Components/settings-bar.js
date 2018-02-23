@@ -8,17 +8,30 @@ class SettingsBar extends Component {
     this.state = {
       selectedItem: undefined
     };
+
+    this.setSelected = this.setSelected.bind(this);
+  }
+
+  setSelected(item,initial) {
+    let selectedItem = Object.assign({},this.props.selectedItem ) ;
+    selectedItem.item = item;
+    this.props.update(selectedItem,initial);
+
+
   }
 
   render() {
-    let val = this.props.selectedItem;
+    
+    let val = undefined;
+    if(this.props.selectedItem.item )
+     val = Object.assign({},this.props.selectedItem.item ) ;
     return (
       <div className="col-12 col-lg-2 bg-light">
         <h5>Settings</h5>
 
-        {this.props.selectedItem ? (
-         this.props.selectedItem.type =="STATE"? <StateSettings selectedItem={val} setSelected={this.props.setSelected}/>
-         : <ArcSettings selectedItem={val} setSelected={this.props.setSelected}/>
+        {val ? (
+         val.type =="STATE"? <StateSettings selectedItem={val} setSelected={this.setSelected} hasInitial={this.props.hasInitial} />
+         : <ArcSettings selectedItem={val} setSelected={this.setSelected} content={this.props.content}/>
         ) : (
           <div style={{ height: 250 }}> </div>
         )}
@@ -91,9 +104,9 @@ class StateSettings extends Component {
             val.isStart = val.isStart
               ? false
               : true;
-            this.props.setSelected(val);
+            this.props.setSelected(val,val.isStart);
           }}
-          disabled={false}
+          disabled={ this.props.hasInitial && !val.isStart }
           onChange={() => {}}
         />
         <label className="custom-control-label" htmlFor="customCheck1">
@@ -141,8 +154,9 @@ class ArcSettings extends Component {
   render() {
 
 
-
+    let content = this.props.content;
     let val = this.props.selectedItem;
+    console.log(content);
     console.log(val);
     return (
     <div>
@@ -159,13 +173,13 @@ class ArcSettings extends Component {
           <div className="input-group-prepend">
             <span className="input-group-text">Start</span>
           </div>
-          <input type="text" className="form-control"  defaultValue={val.start.name} readOnly />
+          <input type="text" className="form-control"  defaultValue={content[val.start].name} readOnly />
         </div>
         <div className="input-group   ">
           <div className="input-group-prepend">
             <span className="input-group-text">End</span>
           </div>
-          <input type="text" className="form-control"  defaultValue={val.end.name}  readOnly/>
+          <input type="text" className="form-control"  defaultValue={content[val.end].name}  readOnly/>
         </div>
         <div className="input-group   ">
           <div className="input-group-prepend">
