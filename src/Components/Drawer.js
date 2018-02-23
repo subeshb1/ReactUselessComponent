@@ -50,6 +50,7 @@ class Drawer extends Component {
     this.state = this.getContentData(tuples);
   }
 
+  //Updating selectedItem MODE 0 action
   update(selectedItem,hasInitial) {
     if(hasInitial === undefined || typeof hasInitial !== "boolean")
       hasInitial = this.state.hasInitial;
@@ -76,6 +77,58 @@ class Drawer extends Component {
     }
   }
 
+  //changing Mode
+  setMode(mode) {
+    
+    switch(this.state.mode) {
+      case 0:
+        if(mode === 0)
+          return;
+        this.setState({mode} ,() => {
+          //to remove selection if selected
+          let selectedItem = Object.assign({},this.state.selectedItem);
+          if(selectedItem.item) {
+          selectedItem.item = undefined
+          this.update(selectedItem);
+          }
+        });
+        break;
+      case 1:
+        this.setState({mode} );
+        break;
+      case 2:
+        this.setState({mode});
+        break;
+
+    }
+    
+  }
+
+
+  addState(x,y) {
+    let state = {
+      type: "STATE",
+      name: 'q',
+      isSelected: false,
+      x,y,
+      isStart: false,
+      isFinal: false,
+      index: 0
+    }
+    this.state.content.unshift(state);
+    let content = this.state.content.map( (obj,index) => {
+      if(index === 0)
+        return obj
+      if(obj.type == "STATE") {
+        obj.index++;
+      } else {
+        obj.index++;
+        obj.start++;
+        obj.end++;
+      }
+    });
+    this.setState( {content:this.state.content,mode:0});
+  }
   componentDidUpdate() {
     // console.log(this.state);
   }
@@ -89,12 +142,17 @@ class Drawer extends Component {
 
         <div className="row  mx-auto " style={{ marginTop: -10 }}>
           {/* Tools Menu */}
-          <ToolBar />
+          <ToolBar 
+            setMode={this.setMode.bind(this)}
+            mode={this.state.mode}
+          />
           {/* Drawer */}
           <Draw
             content={mappedContent}
             selectedItem={Object.assign({}, this.state.selectedItem)}
             update={this.update.bind(this)}
+            mode={this.state.mode}
+            addState={this.addState.bind(this)}
           />
           {/*Settings*/}
           <SettingsBar
@@ -163,7 +221,8 @@ class Drawer extends Component {
         item: undefined,
         index: undefined,
         isDragged: false
-      }
+      },
+      mode:0
     };
 
     return state;

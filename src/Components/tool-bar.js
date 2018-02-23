@@ -43,17 +43,21 @@ class ToolBar extends Component {
     this.state = {
       tools: [
         {
-          mode: "SELECT",
+          //SELECT
+          mode: 0,
           content: selectSVG,
-          isActive: true
+          isActive: true,
+          
         },
         {
-          mode: "DRAW",
+          //STATE
+          mode: 1,
           content: stateSVG,
           isActive: false
         },
         {
-          mode: "DRAW",
+          //ARC
+          mode: 2,
           content: arcSVG,
           isActive: false
         }
@@ -61,6 +65,10 @@ class ToolBar extends Component {
       active: undefined
     };
     this.state.active = this.state.tools[0];
+  }
+
+  componentWillReceiveProps(nextProps) {
+   this.makeActive(nextProps.mode)
   }
 
   makeActive(index) {
@@ -78,6 +86,7 @@ class ToolBar extends Component {
           isActive={item.isActive}
           key={index}
           index={index}
+          setMode={this.props.setMode}
         >
           {item.content}
         </ToolButton>
@@ -101,6 +110,7 @@ const ToolButton = props => {
       className={`btn btn-light ${props.isActive ? "active" : " "}`}
       onClick={() => {
         props.makeActive(props.index);
+        props.setMode(props.index);
       }}
     >
       <svg
