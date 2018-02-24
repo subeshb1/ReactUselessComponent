@@ -51,7 +51,7 @@ class Draw extends Component {
   }
 
   //set a item to be draged
-  setDragItem(index) {
+  setDragItem(index,evt) {
     if (this.props.mode === 0) {
       let item = Object.assign({}, this.props.content[index]);
       let selectedItem = Object.assign({}, this.props.selectedItem);
@@ -62,6 +62,9 @@ class Draw extends Component {
       this.setState({ touchAction: "none" });
       this.props.update(selectedItem);
     } else if (this.props.mode === 2) {
+      
+      if(evt.type == "touchstart"  &&  !(navigator.userAgent.indexOf("Firefox") > -1))
+        return 
       this.props.addToSelectedList(index);
     }
 
@@ -110,8 +113,8 @@ class Draw extends Component {
         >
           <svg
             className="position-absolute"
-            width="300%"
-            height="300%"
+            width="1000%"
+            height="1000%"
             style={{
               background: "white",
               touchAction: this.state.touchAction,
@@ -122,7 +125,9 @@ class Draw extends Component {
             onMouseUp={this.removeDrag}
             onTouchEnd={this.removeDrag}
             onMouseDown={this.removeSelection}
+            onTouchStart={this.removeSelection}
             onTouchMove={this.moveChild}
+            
           >
             <g transform={`scale(${this.state.scale})`}>{content}</g>
           </svg>

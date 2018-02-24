@@ -180,9 +180,49 @@ class Drawer extends Component {
     });
     this.setState({ selectedItemList: [] });
   }
-  componentDidUpdate() {
-    // console.log(this.state);
+
+  deleteSelected(selectedItem) {
+    let adjustState = (index, arc) => {
+      this.state.content.splice(index, 1);
+      let length = this.state.content.length;
+      for (let i = index; i < length; i++) {
+        let item = this.state.content[i];
+        item.index = i;
+        if (item.type == "ARC" && !arc) {
+          item.start > index ? item.start-- : 1;
+          item.end > index ? item.end-- : 1;
+        }
+      }
+    };
+    let index = selectedItem.index;
+    let hasInitial = this.state.hasInitial;
+    console.log(selectedItem);
+
+    if (selectedItem.item.type == "STATE") {
+      let item = index;
+      let isArc = false;
+      hasInitial = selectedItem.item.isStart ? false: hasInitial;
+      while ( (item = this.state.content.findIndex(item => { if (item.type == "ARC") { if (item.start === index || item.end === index) { return true; } } return false; })) > -1 )
+        adjustState(item, true);
+
+      adjustState(index,false);
+
+    } else if ((selectedItem.item.type = "ARC")) {
+      adjustState(index, true);
+    }
+    this.state.selectedItem.item = undefined;
+    this.state.selectedItem.index = undefined;
+    this.setState({
+      content: this.state.content,
+      selectedItem: this.state.selectedItem,
+      hasInitial
+    });
   }
+
+  componentDidUpdate() {
+    console.log(this.state);
+  }
+
   render() {
     let mappedContent = this.state.content.map(obj => Object.assign({}, obj));
     return (
@@ -210,6 +250,7 @@ class Drawer extends Component {
             selectedItem={Object.assign({}, this.state.selectedItem)}
             update={this.update.bind(this)}
             hasInitial={this.state.hasInitial}
+            deleteSelected={this.deleteSelected.bind(this)}
           />
         </div>
       </div>

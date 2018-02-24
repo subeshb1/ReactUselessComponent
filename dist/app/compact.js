@@ -3119,10 +3119,10 @@ class State extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
   //Enable Drag
   enableDrag(evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
 
-    this.props.onMouseDown(this.props.index);
+    evt.preventDefault();
+    this.props.onMouseDown(this.props.index, evt);
+    evt.stopPropagation();
   }
 
   render() {
@@ -3133,6 +3133,7 @@ class State extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       {
         onMouseDown: this.enableDrag,
         onTouchStart: this.enableDrag,
+
         style: { cursor: "move" }
       },
       this.props.isFinal ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("circle", {
@@ -3246,8 +3247,9 @@ class StateArc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     }
 
     enableSelect(evt) {
-        this.props.onMouseDown(this.props.index);
         evt.preventDefault();
+        this.props.onMouseDown(this.props.index);
+
         evt.stopPropagation();
     }
 
@@ -3270,7 +3272,7 @@ class StateArc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 d: ` M ${start.x} ${start.y} Q ${ctrPt.x} ${ctrPt.y} ${end.x} ${end.y} `,
                 stroke: 'black', fill: 'none',
                 strokeWidth: '2px', strokeDasharray: this.props.isSelected ? "5" : '0' }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('polygon', { onMouseDown: this.enableSelect, style: { cursor: 'move' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('polygon', { onTouchStart: this.enableSelect, style: { cursor: 'move' }, onMouseDown: this.enableSelect,
                 points: ` ${text[0].x},${text[0].y},${text[1].x},${text[1].y},${text[2].x},${text[2].y} `,
                 stroke: 'black', fill: 'grey', strokeWidth: '2px' }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -3290,7 +3292,7 @@ class StateArc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 d: ` M ${start.x} ${start.y} C ${start.x - 120} ${start.y - 120} ${start.x + 120} ${start.y - 120} ${end.x} ${end.y}`,
                 stroke: 'black', fill: 'none',
                 strokeWidth: '2px', strokeDasharray: this.props.isSelected ? "5" : '0' }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('polygon', { onMouseDown: this.enableSelect, style: { cursor: 'move' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('polygon', { onTouchStart: this.enableSelect, onMouseDown: this.enableSelect, style: { cursor: 'move' },
                 points: ` ${start.x + 5},${start.y - 90},${start.x - 5},${start.y - 100},${start.x - 5},${start.y - 80} `,
                 stroke: 'black', fill: 'grey', strokeWidth: '2px' }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -25955,9 +25957,53 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     });
     this.setState({ selectedItemList: [] });
   }
-  componentDidUpdate() {
-    // console.log(this.state);
+
+  deleteSelected(selectedItem) {
+    let adjustState = (index, arc) => {
+      this.state.content.splice(index, 1);
+      let length = this.state.content.length;
+      for (let i = index; i < length; i++) {
+        let item = this.state.content[i];
+        item.index = i;
+        if (item.type == "ARC" && !arc) {
+          item.start > index ? item.start-- : 1;
+          item.end > index ? item.end-- : 1;
+        }
+      }
+    };
+    let index = selectedItem.index;
+    let hasInitial = this.state.hasInitial;
+    console.log(selectedItem);
+
+    if (selectedItem.item.type == "STATE") {
+      let item = index;
+      let isArc = false;
+      hasInitial = selectedItem.item.isStart ? false : hasInitial;
+      while ((item = this.state.content.findIndex(item => {
+        if (item.type == "ARC") {
+          if (item.start === index || item.end === index) {
+            return true;
+          }
+        }return false;
+      })) > -1) adjustState(item, true);
+
+      adjustState(index, false);
+    } else if (selectedItem.item.type = "ARC") {
+      adjustState(index, true);
+    }
+    this.state.selectedItem.item = undefined;
+    this.state.selectedItem.index = undefined;
+    this.setState({
+      content: this.state.content,
+      selectedItem: this.state.selectedItem,
+      hasInitial
+    });
   }
+
+  componentDidUpdate() {
+    console.log(this.state);
+  }
+
   render() {
     let mappedContent = this.state.content.map(obj => Object.assign({}, obj));
     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -25981,7 +26027,8 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
           content: mappedContent,
           selectedItem: Object.assign({}, this.state.selectedItem),
           update: this.update.bind(this),
-          hasInitial: this.state.hasInitial
+          hasInitial: this.state.hasInitial,
+          deleteSelected: this.deleteSelected.bind(this)
         })
       )
     );
@@ -26115,7 +26162,7 @@ class Draw extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
   }
 
   //set a item to be draged
-  setDragItem(index) {
+  setDragItem(index, evt) {
     if (this.props.mode === 0) {
       let item = Object.assign({}, this.props.content[index]);
       let selectedItem = Object.assign({}, this.props.selectedItem);
@@ -26126,6 +26173,8 @@ class Draw extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       this.setState({ touchAction: "none" });
       this.props.update(selectedItem);
     } else if (this.props.mode === 2) {
+
+      if (evt.type == "touchstart" && !(navigator.userAgent.indexOf("Firefox") > -1)) return;
       this.props.addToSelectedList(index);
     }
   }
@@ -26176,8 +26225,8 @@ class Draw extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
           "svg",
           {
             className: "position-absolute",
-            width: "300%",
-            height: "300%",
+            width: "1000%",
+            height: "1000%",
             style: {
               background: "white",
               touchAction: this.state.touchAction,
@@ -26188,7 +26237,9 @@ class Draw extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
             onMouseUp: this.removeDrag,
             onTouchEnd: this.removeDrag,
             onMouseDown: this.removeSelection,
+            onTouchStart: this.removeSelection,
             onTouchMove: this.moveChild
+
           },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
@@ -26483,12 +26534,19 @@ class SettingsBar extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     };
 
     this.setSelected = this.setSelected.bind(this);
+    this.deleteSelected = this.deleteSelected.bind(this);
   }
 
   setSelected(item, initial) {
     let selectedItem = Object.assign({}, this.props.selectedItem);
     selectedItem.item = item;
     this.props.update(selectedItem, initial);
+  }
+
+  deleteSelected(item) {
+    let selectedItem = Object.assign({}, this.props.selectedItem);
+    selectedItem.item = item;
+    this.props.deleteSelected(selectedItem);
   }
 
   render() {
@@ -26503,7 +26561,7 @@ class SettingsBar extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         null,
         "Settings"
       ),
-      val ? val.type == "STATE" ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(StateSettings, { selectedItem: val, setSelected: this.setSelected, hasInitial: this.props.hasInitial }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ArcSettings, { selectedItem: val, setSelected: this.setSelected, content: this.props.content }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+      val ? val.type == "STATE" ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(StateSettings, { selectedItem: val, setSelected: this.setSelected, hasInitial: this.props.hasInitial, deleteSelected: this.deleteSelected }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ArcSettings, { selectedItem: val, setSelected: this.setSelected, content: this.props.content, deleteSelected: this.deleteSelected }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         "div",
         { style: { height: 250 } },
         " "
@@ -26641,6 +26699,11 @@ class StateSettings extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
             { className: "custom-control-label", htmlFor: "customCheck2" },
             "Final"
           )
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "button",
+          { className: "btn btn-danger", onClick: () => this.props.deleteSelected(val) },
+          "Delete"
         )
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -26667,8 +26730,6 @@ class ArcSettings extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
     let content = this.props.content;
     let val = this.props.selectedItem;
-    console.log(content);
-    console.log(val);
     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
       "div",
       null,
@@ -26732,6 +26793,11 @@ class ArcSettings extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
               val.input = e.target.value.split(/[ ,]+/);
               this.props.setSelected(val);
             } })
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "button",
+          { className: "btn btn-danger", onClick: () => this.props.deleteSelected(val) },
+          "Delete"
         )
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

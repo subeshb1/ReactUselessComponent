@@ -11,10 +11,11 @@ class State extends Component {
 
   //Enable Drag
   enableDrag(evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
+   
   
-    this.props.onMouseDown(this.props.index);
+    evt.preventDefault();
+    this.props.onMouseDown(this.props.index,evt);
+    evt.stopPropagation();
    
   }
 
@@ -25,6 +26,7 @@ class State extends Component {
       <g
         onMouseDown={this.enableDrag}
         onTouchStart={this.enableDrag}
+        
         style={{ cursor: "move" }}
       >
         {this.props.isFinal ? (

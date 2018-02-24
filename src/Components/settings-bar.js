@@ -10,14 +10,19 @@ class SettingsBar extends Component {
     };
 
     this.setSelected = this.setSelected.bind(this);
+    this.deleteSelected = this.deleteSelected.bind(this);
   }
 
   setSelected(item,initial) {
     let selectedItem = Object.assign({},this.props.selectedItem ) ;
     selectedItem.item = item;
     this.props.update(selectedItem,initial);
+  }
 
-
+  deleteSelected(item) {
+    let selectedItem = Object.assign({},this.props.selectedItem ) ;
+    selectedItem.item = item;
+    this.props.deleteSelected(selectedItem);
   }
 
   render() {
@@ -30,8 +35,8 @@ class SettingsBar extends Component {
         <h5>Settings</h5>
 
         {val ? (
-         val.type =="STATE"? <StateSettings selectedItem={val} setSelected={this.setSelected} hasInitial={this.props.hasInitial} />
-         : <ArcSettings selectedItem={val} setSelected={this.setSelected} content={this.props.content}/>
+         val.type =="STATE"? <StateSettings selectedItem={val} setSelected={this.setSelected} hasInitial={this.props.hasInitial} deleteSelected={this.deleteSelected}/>
+         : <ArcSettings selectedItem={val} setSelected={this.setSelected} content={this.props.content} deleteSelected={this.deleteSelected}/>
         ) : (
           <div style={{ height: 250 }}> </div>
         )}
@@ -58,7 +63,6 @@ class StateSettings extends Component {
     this.setState({x:nextProps.selectedItem.x,y:nextProps.selectedItem.y,name:nextProps.selectedItem.name});
   }
   render() {
-
 
 
   let val = this.props.selectedItem;
@@ -131,6 +135,7 @@ class StateSettings extends Component {
           Final
         </label>
       </div>
+      <button className="btn btn-danger" onClick={() => this.props.deleteSelected(val)}>Delete</button>
     </div>
     <div style={{ height: 50 }}> </div>
   </div>
@@ -156,8 +161,6 @@ class ArcSettings extends Component {
 
     let content = this.props.content;
     let val = this.props.selectedItem;
-    console.log(content);
-    console.log(val);
     return (
     <div>
       <svg width="100%" height="200" viewBox="0 0 200 200">
@@ -190,6 +193,7 @@ class ArcSettings extends Component {
             this.props.setSelected(val);
           }}/>
         </div>
+        <button className="btn btn-danger" onClick={() => this.props.deleteSelected(val)}>Delete</button>
         
       </div>
       <div style={{ height: 50 }}> </div>
