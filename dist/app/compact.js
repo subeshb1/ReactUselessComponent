@@ -25786,44 +25786,44 @@ SVG.propTypes = {};
 
 
 let tuples = {
-  state: ["A", "B", "C", "D", "E", "F", "G", "H"],
-  alphabet: ["0", "1"],
-  initial: ["A"],
-  final: ["C"],
-  transition: {
-    A: {
-      0: ["B"],
-      1: ["F"]
-    },
-    B: {
-      0: ["G"],
-      1: ["C"]
-    },
-    C: {
-      0: ["A"],
-      1: ["C"]
-    },
-    D: {
-      0: ["C"],
-      1: ["G"]
-    },
-    E: {
-      0: ["H"],
-      1: ["F"]
-    },
-    F: {
-      0: ["C"],
-      1: ["G"]
-    },
-    G: {
-      0: ["G"],
-      1: ["E"]
-    },
-    H: {
-      0: ["G"],
-      1: ["C"]
-    }
-  }
+  // state: ["A", "B", "C", "D", "E", "F", "G", "H"],
+  // alphabet: ["0", "1"],
+  // initial: ["A"],
+  // final: ["C"],
+  // transition: {
+  //   A: {
+  //     0: ["B"],
+  //     1: ["F"]
+  //   },
+  //   B: {
+  //     0: ["G"],
+  //     1: ["C"]
+  //   },
+  //   C: {
+  //     0: ["A"],
+  //     1: ["C"]
+  //   },
+  //   D: {
+  //     0: ["C"],
+  //     1: ["G"]
+  //   },
+  //   E: {
+  //     0: ["H"],
+  //     1: ["F"]
+  //   },
+  //   F: {
+  //     0: ["C"],
+  //     1: ["G"]
+  //   },
+  //   G: {
+  //     0: ["G"],
+  //     1: ["E"]
+  //   },
+  //   H: {
+  //     0: ["G"],
+  //     1: ["C"]
+  //   }
+  // }
 };
 class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
   constructor(props) {
@@ -25831,6 +25831,7 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     this.state = this.getContentData(tuples);
   }
 
+  //Updating selectedItem MODE 0 action
   update(selectedItem, hasInitial) {
     if (hasInitial === undefined || typeof hasInitial !== "boolean") hasInitial = this.state.hasInitial;
     if (selectedItem) {
@@ -25853,6 +25854,107 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     }
   }
 
+  //changing Mode
+  setMode(mode) {
+    switch (this.state.mode) {
+      case 0:
+        if (mode === 0) return;
+        this.setState({ mode }, () => {
+          //to remove selection if selected
+          let selectedItem = Object.assign({}, this.state.selectedItem);
+          if (selectedItem.item) {
+            selectedItem.item = undefined;
+            this.update(selectedItem);
+          }
+        });
+        break;
+      case 1:
+        this.setState({ mode });
+        break;
+      case 2:
+        this.setState({ mode });
+        break;
+    }
+  }
+
+  addState(x, y) {
+    let state = {
+      type: "STATE",
+      name: "q",
+      isSelected: false,
+      x,
+      y,
+      isStart: false,
+      isFinal: false,
+      index: 0
+    };
+    this.state.content.unshift(state);
+
+    let content = this.state.content.map((obj, index) => {
+      if (index === 0) return obj;
+      if (obj.type == "STATE") {
+        obj.index++;
+      } else {
+        obj.index++;
+        obj.start++;
+        obj.end++;
+      }
+    });
+
+    let selectedItem = Object.assign({}, this.state.selectedItem);
+
+    selectedItem.item = state;
+    selectedItem.index = 0;
+    selectedItem.item.isSelected = true;
+    this.setState({ content: this.state.content, mode: 0, selectedItem });
+  }
+
+  addArc(start, end) {
+    let arc = this.state.content.find(obj => {
+      if (obj.type == "ARC") {
+        return obj.start === start.index && obj.end === end.index;
+      }
+      return false;
+    });
+    let index = this.state.content.length;
+    if (!arc) {
+      arc = {
+        type: "ARC",
+        start: start.index,
+        end: end.index,
+        input: [],
+        isSelected: true,
+        index
+      };
+      this.state.content.push(arc);
+    }
+    let selectedItem = Object.assign({}, this.state.selectedItem);
+    selectedItem.item = arc;
+    selectedItem.index = arc.index;
+    selectedItem.item.isSelected = true;
+
+    this.setState({ content: this.state.content, mode: 0, selectedItem }, () => this.removeSelectedList());
+  }
+
+  addToSelectedList(index) {
+    let selectedItemList = this.state.selectedItemList;
+    let item = this.state.content[index];
+    item.isSelected = true;
+    selectedItemList.push(item);
+
+    if (selectedItemList.length == 2) {
+      this.addArc(selectedItemList[0], selectedItemList[1]);
+      return;
+    }
+    this.setState({ selectedItemList });
+  }
+
+  removeSelectedList() {
+    this.state.selectedItemList.forEach(item => {
+      item.isSelected = false;
+    });
+    this.setState({ selectedItemList: [] });
+  }
   componentDidUpdate() {
     // console.log(this.state);
   }
@@ -25865,11 +25967,15 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         "div",
         { className: "row  mx-auto ", style: { marginTop: -10 } },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__tool_bar__["a" /* default */], null),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__tool_bar__["a" /* default */], { setMode: this.setMode.bind(this), mode: this.state.mode }),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__utils_svg_draw__["a" /* default */], {
           content: mappedContent,
           selectedItem: Object.assign({}, this.state.selectedItem),
-          update: this.update.bind(this)
+          update: this.update.bind(this),
+          mode: this.state.mode,
+          addState: this.addState.bind(this),
+          addToSelectedList: this.addToSelectedList.bind(this),
+          removeSelectedList: this.removeSelectedList.bind(this)
         }),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__settings_bar__["a" /* default */], {
           content: mappedContent,
@@ -25887,42 +25993,43 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     let x = -100;
     let index = 0;
     let stateContent = [];
-    let hasInitial = true;
-    tuples.state.forEach(state => {
-      stateContent.push({
-        type: "STATE",
-        name: state,
-        isSelected: false,
-        x: x += 200,
-        y: y,
-        isStart: tuples.initial == state,
-        isFinal: !(tuples.final.findIndex(val => val === state) == -1),
-        index: index++
-      });
-    });
-
     let linkContent = [];
-    for (let state in tuples.transition) {
-      for (let input in tuples.transition[state]) {
-        let start = stateContent.find(s => s.name == state);
-        let end = stateContent.find(s => s.name == tuples.transition[state][input][0]);
-        let link = linkContent.find(link => link.start == start && link.end == end);
-        if (!link) {
-          linkContent.push({
-            type: "ARC",
-            start: start.index,
-            end: end.index,
-            input: [input],
-            isSelected: false,
-            index: index++
-          });
-        } else {
-          link.input.push(input);
+    let hasInitial = false;
+    if (Object.keys(tuples).length > 0) {
+      hasInitial = true;
+      tuples.state.forEach(state => {
+        stateContent.push({
+          type: "STATE",
+          name: state,
+          isSelected: false,
+          x: x += 200,
+          y: y,
+          isStart: tuples.initial == state,
+          isFinal: !(tuples.final.findIndex(val => val === state) == -1),
+          index: index++
+        });
+      });
+
+      for (let state in tuples.transition) {
+        for (let input in tuples.transition[state]) {
+          let start = stateContent.find(s => s.name == state);
+          let end = stateContent.find(s => s.name == tuples.transition[state][input][0]);
+          let link = linkContent.find(link => link.start == start && link.end == end);
+          if (!link) {
+            linkContent.push({
+              type: "ARC",
+              start: start.index,
+              end: end.index,
+              input: [input],
+              isSelected: false,
+              index: index++
+            });
+          } else {
+            link.input.push(input);
+          }
         }
       }
     }
-
-    // return [ ...stateContent, ...linkContent];
 
     let state = {
       content: [...stateContent, ...linkContent],
@@ -25932,7 +26039,9 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         item: undefined,
         index: undefined,
         isDragged: false
-      }
+      },
+      mode: 0,
+      selectedItemList: []
     };
 
     return state;
@@ -25959,171 +26068,199 @@ Drawer.propTypes = {};
 
 
 class Draw extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
+    this.state = {
+      scale: 1, //k
+      touchAction: "auto" //k
+    };
 
-            scale: 1, //k
-            touchAction: 'auto' //k
+    //handles drag setting
+    this.setDragItem = this.setDragItem.bind(this);
+    this.removeDrag = this.removeDrag.bind(this);
+    this.moveChild = this.moveChild.bind(this);
+    this.removeSelection = this.removeSelection.bind(this);
+  }
 
+  //to move a Child (mouseMove)
+  moveChild(e) {
+    // e.preventDefault();
+    if (this.props.mode === 0) {
+      let selectedItem = Object.assign({}, this.props.selectedItem);
 
-            //handles drag setting
-        };this.setDragItem = this.setDragItem.bind(this);
-        this.removeDrag = this.removeDrag.bind(this);
-        this.moveChild = this.moveChild.bind(this);
-        this.removeSelection = this.removeSelection.bind(this);
-    }
-
-    //to move a Child (mouseMove)
-    moveChild(e) {
-        // e.preventDefault();
-        let selectedItem = Object.assign({}, this.props.selectedItem);
-
-        if (selectedItem.isDragged) {
-
-            let rect = e.currentTarget.getBoundingClientRect();
-            let clientX = e.clientX || e.touches[0].clientX;
-            let clientY = e.clientY || e.touches[0].clientY;
-            let offsetX = clientX - rect.left;
-            let offsetY = clientY - rect.top;
-            selectedItem.item.x = offsetX / this.state.scale;
-            selectedItem.item.y = offsetY / this.state.scale;
-            this.props.update(selectedItem);
-        }
-
-        e.stopPropagation();
-    }
-
-    //Remove dragItem when mouse Released (mouseUp)
-    removeDrag(e) {
-
-        let selectedItem = Object.assign({}, this.props.selectedItem);
-        if (selectedItem.isDragged) {
-
-            selectedItem.isDragged = false;
-            this.props.update(selectedItem);
-        }
-    }
-
-    //set a item to be draged
-    setDragItem(index) {
-
-        let item = Object.assign({}, this.props.content[index]);
-        let selectedItem = Object.assign({}, this.props.selectedItem);
-        selectedItem.index = index;
-        selectedItem.item = item;
-        item.isSelected = true;
-        selectedItem.isDragged = true;
-        this.setState({ touchAction: 'none' });
+      if (selectedItem.isDragged) {
+        let rect = e.currentTarget.getBoundingClientRect();
+        let clientX = e.clientX || e.touches[0].clientX;
+        let clientY = e.clientY || e.touches[0].clientY;
+        let offsetX = clientX - rect.left;
+        let offsetY = clientY - rect.top;
+        selectedItem.item.x = offsetX / this.state.scale;
+        selectedItem.item.y = offsetY / this.state.scale;
         this.props.update(selectedItem);
+      }
     }
+    e.stopPropagation();
+  }
 
-    //Remove Selection (onClick)
-    removeSelection(e) {
-        let selectedItem = Object.assign({}, this.props.selectedItem);
-
-        if (selectedItem.item) {
-
-            selectedItem.item = undefined;
-            this.props.update(selectedItem);
-            this.setState({ touchAction: 'auto' });
-        }
+  //Remove dragItem when mouse Released (mouseUp)
+  removeDrag(e) {
+    if (this.props.mode === 0) {
+      let selectedItem = Object.assign({}, this.props.selectedItem);
+      if (selectedItem.isDragged) {
+        selectedItem.isDragged = false;
+        this.props.update(selectedItem);
+      }
     }
+  }
 
-    componentDidUpdate() {
-        // console.log(this.state);
+  //set a item to be draged
+  setDragItem(index) {
+    if (this.props.mode === 0) {
+      let item = Object.assign({}, this.props.content[index]);
+      let selectedItem = Object.assign({}, this.props.selectedItem);
+      selectedItem.index = index;
+      selectedItem.item = item;
+      item.isSelected = true;
+      selectedItem.isDragged = true;
+      this.setState({ touchAction: "none" });
+      this.props.update(selectedItem);
+    } else if (this.props.mode === 2) {
+      this.props.addToSelectedList(index);
     }
+  }
 
-    render() {
-        let content = this.getContent();
-        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'div',
-            {
+  //Remove Selection (onClick)
+  removeSelection(e) {
+    if (this.props.mode === 0) {
+      let selectedItem = Object.assign({}, this.props.selectedItem);
+      if (selectedItem.item) {
+        selectedItem.item = undefined;
+        this.props.update(selectedItem);
+        this.setState({ touchAction: "auto" });
+      }
+    } else if (this.props.mode === 1) {
+      let rect = e.currentTarget.getBoundingClientRect();
+      let clientX = e.clientX || e.touches[0].clientX;
+      let clientY = e.clientY || e.touches[0].clientY;
+      let offsetX = clientX - rect.left;
+      let offsetY = clientY - rect.top;
+      let x = offsetX / this.state.scale;
+      let y = offsetY / this.state.scale;
+      this.props.addState(x, y);
+    } else if (this.props.mode === 2) {
 
-                className: 'container-fluid col-12 col-lg-9 p-0 px-lg-2'
+      this.props.removeSelectedList();
+    }
+  }
 
+  componentDidUpdate() {
+    // console.log(this.state);
+  }
+
+  render() {
+    let content = this.getContent();
+    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+      "div",
+      { className: "container-fluid col-12 col-lg-9 p-0 px-lg-2" },
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        "div",
+        {
+          style: {
+            overflow: "scroll",
+            height: window.innerHeight - window.innerHeight * 0.1
+          },
+          className: "container-fluid col-12"
+        },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "svg",
+          {
+            className: "position-absolute",
+            width: "300%",
+            height: "300%",
+            style: {
+              background: "white",
+              touchAction: this.state.touchAction,
+              top: 0,
+              left: 0
             },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                {
-                    style: {
-                        overflow: 'scroll',
-                        height: window.innerHeight - window.innerHeight * 0.10
+            onMouseMove: this.moveChild,
+            onMouseUp: this.removeDrag,
+            onTouchEnd: this.removeDrag,
+            onMouseDown: this.removeSelection,
+            onTouchMove: this.moveChild
+          },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "g",
+            { transform: `scale(${this.state.scale})` },
+            content
+          )
+        )
+      ),
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        "div",
+        { className: " position-absolute p-1", style: { top: 0 } },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "div",
+          {
+            className: "btn-group",
+            hidden: this.props.selectedItem.item ? true : false
+          },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "button",
+            {
+              className: "btn btn-dark",
+              onClick: () => {
+                this.setState({ scale: this.state.scale + 0.05 });
+              }
+            },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-plus" })
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "button",
+            {
+              className: "btn btn-secondary",
+              onClick: () => {
+                this.setState({ scale: this.state.scale - 0.05 });
+              }
+            },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-minus" })
+          )
+        )
+      )
+    );
+  }
 
-                    },
-                    className: 'container-fluid col-12' },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'svg',
-                    {
-                        className: 'position-absolute',
-                        width: '300%', height: '300%',
-                        style: { background: "white", touchAction: this.state.touchAction, top: 0, left: 0 },
-                        onMouseMove: this.moveChild,
-                        onMouseUp: this.removeDrag,
-                        onTouchEnd: this.removeDrag,
-                        onMouseDown: this.removeSelection,
-                        onTouchMove: this.moveChild
-                    },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'g',
-                        { transform: `scale(${this.state.scale})` },
-                        content
-                    )
-                )
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                { className: ' position-absolute p-1',
-                    style: { top: 0 } },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'btn-group', hidden: this.props.selectedItem.item ? true : false },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'button',
-                        { className: 'btn btn-dark', onClick: () => {
-                                this.setState({ scale: this.state.scale + 0.05 });
-                            } },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-plus' })
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'button',
-                        { className: 'btn btn-secondary', onClick: () => {
-                                this.setState({ scale: this.state.scale - 0.05 });
-                            } },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-minus' })
-                    )
-                )
-            )
-        );
-    }
-
-    getContent() {
-        let content = this.props.content;
-        let mappedContent = content.map(ob => Object.assign({}, ob));
-        return mappedContent.reverse().map((val, index) => {
-            if (val.type == 'STATE') {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__state__["a" /* default */], { key: index,
-                    cx: val.x, cy: val.y,
-                    index: val.index, text: val.name,
-                    isSelected: val.isSelected,
-                    onMouseDown: this.setDragItem,
-                    isStart: val.isStart,
-                    isFinal: val.isFinal
-                });
-            } else {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__arc__["a" /* default */], { key: index,
-                    index: val.index,
-                    isSelected: val.isSelected,
-                    start: { x: content[val.start].x, y: content[val.start].y },
-                    end: { x: content[val.end].x, y: content[val.end].y },
-                    invert: val.invert,
-                    onMouseDown: this.setDragItem,
-                    input: val.input });
-            }
+  getContent() {
+    let content = this.props.content;
+    let mappedContent = content.map(ob => Object.assign({}, ob));
+    return mappedContent.reverse().map((val, index) => {
+      if (val.type == "STATE") {
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__state__["a" /* default */], {
+          key: index,
+          cx: val.x,
+          cy: val.y,
+          index: val.index,
+          text: val.name,
+          isSelected: val.isSelected,
+          onMouseDown: this.setDragItem,
+          isStart: val.isStart,
+          isFinal: val.isFinal
         });
-    }
-
+      } else {
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__arc__["a" /* default */], {
+          key: index,
+          index: val.index,
+          isSelected: val.isSelected,
+          start: { x: content[val.start].x, y: content[val.start].y },
+          end: { x: content[val.end].x, y: content[val.end].y },
+          invert: val.invert,
+          onMouseDown: this.setDragItem,
+          input: val.input
+        });
+      }
+    });
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Draw);
@@ -26239,21 +26376,29 @@ class ToolBar extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     super(props);
     this.state = {
       tools: [{
-        mode: "SELECT",
+        //SELECT
+        mode: 0,
         content: selectSVG,
         isActive: true
+
       }, {
-        mode: "DRAW",
+        //STATE
+        mode: 1,
         content: stateSVG,
         isActive: false
       }, {
-        mode: "DRAW",
+        //ARC
+        mode: 2,
         content: arcSVG,
         isActive: false
       }],
       active: undefined
     };
     this.state.active = this.state.tools[0];
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.makeActive(nextProps.mode);
   }
 
   makeActive(index) {
@@ -26271,7 +26416,8 @@ class ToolBar extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
           makeActive: this.makeActive.bind(this),
           isActive: item.isActive,
           key: index,
-          index: index
+          index: index,
+          setMode: this.props.setMode
         },
         item.content
       );
@@ -26296,6 +26442,7 @@ const ToolButton = props => {
         className: `btn btn-light ${props.isActive ? "active" : " "}`,
         onClick: () => {
           props.makeActive(props.index);
+          props.setMode(props.index);
         }
       },
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

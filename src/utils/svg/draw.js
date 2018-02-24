@@ -61,20 +61,22 @@ class Draw extends Component {
       selectedItem.isDragged = true;
       this.setState({ touchAction: "none" });
       this.props.update(selectedItem);
+    } else if (this.props.mode === 2) {
+      this.props.addToSelectedList(index);
     }
+
   }
 
   //Remove Selection (onClick)
   removeSelection(e) {
     if (this.props.mode === 0) {
       let selectedItem = Object.assign({}, this.props.selectedItem);
-
       if (selectedItem.item) {
         selectedItem.item = undefined;
         this.props.update(selectedItem);
         this.setState({ touchAction: "auto" });
       }
-    } else {
+    } else if(this.props.mode === 1){
         let rect = e.currentTarget.getBoundingClientRect();
         let clientX = e.clientX || e.touches[0].clientX;
         let clientY = e.clientY || e.touches[0].clientY;
@@ -83,6 +85,10 @@ class Draw extends Component {
         let x = offsetX / this.state.scale;
         let y = offsetY / this.state.scale;
         this.props.addState(x,y);
+
+    } else if (this.props.mode === 2) {
+
+        this.props.removeSelectedList();
 
     }
   }
